@@ -1,61 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Futuristic Contact Page</title>
+    <title>Contact Form</title>
     <link rel="stylesheet" href="css/contact.css">
 </head>
+
 <body>
-<section class="contact-section">
+<div class="background"></div>
+<header>
     <div class="container">
-        <div class="header">
-            <h1>Contact Us</h1>
-            <p>Have questions? We’re here to help. Reach out to us using the form below or explore other ways to connect with us.</p>
-        </div>
+        <ul>
+            <li>
+                <a href="#" class="logo">
+                    <img src="./Images/logo1.png" class="logo-img" title="Optima Coretech">
+                    <h2><span></span></h2>
+                </a>
 
-        <div class="contact-form">
-            <form>
-                <div class="input-group">
-                    <input type="text" id="name" name="name" required>
-                    <label for="name">Your Name</label>
-                </div>
-                <div class="input-group">
-                    <input type="email" id="email" name="email" required>
-                    <label for="email">Your Email</label>
-                </div>
-                <div class="input-group">
-                    <textarea id="message" name="message" rows="5" required></textarea>
-                    <label for="message">Your Message</label>
-                </div>
-                <button type="submit" class="btn">Send Message</button>
-            </form>
-        </div>
-
-        <div class="contact-info">
-            <div class="info-item">
-                <h3>Email</h3>
-                <p>contact@futuristic.com</p>
-            </div>
-            <div class="info-item">
-                <h3>Phone</h3>
-                <p>+1 234 567 890</p>
-            </div>
-            <div class="info-item">
-                <h3>Address</h3>
-                <p>123 Future Blvd, Metropolis</p>
-            </div>
-        </div>
+            </li>
+            <li>
+                <a href="index.html" class="nav-link">Home</a>
+            </li>
+            <li>
+                <a href="index.html" class="nav-link">Join</a>
+            </li>
+            <li>
+          <span class="nav-link theme-toggle">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+          </span>
+            </li>
+        </ul>
     </div>
+</header>
 
-    <!-- Floating Background Animations -->
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-</section>
+<main>
+    <section class="contact">
+        <div class="container">
+            <div class="left">
+                <div class="form-wrapper">
+                    <div class="contact-heading">
+                        <h1>Let's work together<span>.</span></h1>
+                        <p class="text">Or reach us via : <a href="mailto:madjicherif23@gmail.com">opticore@support.com</a></p>
+                    </div>
+                    <form action="https://formspree.io/f/xzzbjdbj" method="POST" class="contact-form">
+                        <div class="input-wrap">
+                            <input class="contact-input" autocomplete="off" name="First Name" type="text" required>
+                            <label>First name</label>
+                            <i class="icon fa-solid fa-address-card"></i>
+                        </div>
 
-<script src="scripts.js"></script>
+                        <div class="input-wrap">
+                            <input class="contact-input" autocomplete="off" name="Last Name" type="text" required>
+                            <label>Last name</label>
+                            <i class="icon fa-solid fa-address-card"></i>
+                        </div>
+
+                        <div class="input-wrap w-100">
+                            <input class="contact-input" autocomplete="off" name="Email" type="email" required>
+                            <label>Email</label>
+                            <i class="icon fa-solid fa-envelope"></i>
+                        </div>
+
+                        <div class="input-wrap textarea w-100">
+                            <textarea name="Message" auto-complete="off" class="contact-input" required></textarea>
+                            <label>Message</label>
+                            <i class="icon fa-solid fa-inbox"></i>
+                        </div>
+
+                        <div class="contact-buttons">
+                            <button class="btn upload">
+                  <span>
+                    <i class="fa-solid fa-paperclip"></i> Add attachement
+                  </span>
+                                <input type="file" name="attachement">
+                            </button>
+                            <input type="submit" value="Send message" class="btn">
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+            <div class="right">
+                <div class="image-wrapper">
+                    <img src="./Images/bg/gallary-bg.png" class="img">
+                    <div class="wave-wrap">
+                        <svg class="wave" viewBox="0 0 783 1536" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path id="wave"
+                                  d="M236.705 1356.18C200.542 1483.72 64.5004 1528.54 1 1535V1H770.538C793.858 63.1213 797.23 196.197 624.165 231.531C407.833 275.698 274.374 331.715 450.884 568.709C627.393 805.704 510.079 815.399 347.561 939.282C185.043 1063.17 281.908 1196.74 236.705 1356.18Z" />
+                        </svg>
+                    </div>
+                    <svg class="dashed-wave" viewBox="0 0 345 877" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path id="dashed-wave"
+                              d="M0.5 876C25.6667 836.167 73.2 739.8 62 673C48 589.5 35.5 499.5 125.5 462C215.5 424.5 150 365 87 333.5C24 302 44 237.5 125.5 213.5C207 189.5 307 138.5 246 87C185 35.5 297 1 344.5 1" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/js/all.min.js"></script>
+<script src="js/contact.js"></script>
 </body>
+
 </html>
