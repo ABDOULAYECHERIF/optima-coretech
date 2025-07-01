@@ -16,6 +16,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script>
+        // Simple debug function to test if button works
+        function testButton() {
+            console.log("Button clicked!");
+            alert("Button is working!");
+        }
+    </script>
 </head>
 
 <body>
@@ -172,6 +180,69 @@
             </section>
             <!-- ====== End of 1.2. hero section ====== -->
         </div>
+
+
+
+
+        <!-- Futuristic Safira AI Chatbot -->
+        <div class="safira-chatbot-container" id="safiraChatbot">
+            <div class="safira-chatbot-header">
+                <div class="safira-status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span>AI Assistant Online</span>
+                </div>
+                <div class="safira-avatar">
+                    <div class="holographic-effect"></div>
+                    <img src="Images/chatbot.png" alt="Safira AI Avatar">
+                </div>
+                <div class="safira-info">
+                    <h3>Safira AI</h3>
+                    <p>Optima CoreTech Assistant</p>
+                </div>
+                <button class="safira-close" id="safiraCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="safira-chatbot-messages" id="safiraMessages">
+                <div class="safira-welcome-message">
+                    <div class="safira-message-bubble ai-message">
+                        <div class="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="safira-input-container">
+                <div class="safira-input-wrapper">
+                    <input type="text" id="safiraUserInput" placeholder="Message Safira AI..." autocomplete="off">
+                    <button id="safiraSendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <button id="safiraMicBtn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <div class="safira-suggestions" id="safiraSuggestions"></div>
+            </div>
+
+            <div class="safira-watermark">
+                <span>OPTIMA CORETECH AI</span>
+            </div>
+        </div>
+
+        <button class="safira-toggle-btn" id="safiraToggleBtn">
+            <div class="safira-toggle-icon">
+                <div class="holographic-effect"></div>
+                <img src="Images/chatbot.png" alt="Chat with Safira">
+            </div>
+            <span class="pulse-text">Chat with AI</span>
+            <span class="notification-badge">1</span>
+        </button>
+
         <!-- ====== 1.3. card section ====== -->
         <section class="feature">
             <div class="container">
@@ -865,8 +936,7 @@
         </footer>
         <!-- End footer section -->
 
-        <!-- Button back to top -->
-        <button onclick="scrollToTop()" id="backToTopBtn" class="btn_hover2"><i class="fa-solid fa-arrow-turn-up"></i></button>
+        
 
         <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
         <script>
@@ -888,6 +958,6 @@
         <!-- Custom JS -->
         <script src="js/script.js"></script>
 
-</body>
+    </div></body>
 
 </html>
