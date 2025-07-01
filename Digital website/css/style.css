@@ -2267,3 +2267,618 @@ footer form button:hover {
     background: linear-gradient(42deg, #7436bb 0.01%, #b520a3 100%);
     border-radius: 5px;
 }
+
+/* ===== SAFIRA AI CHATBOT ===== */
+:root {
+    --safira-primary: #00f0ff;
+    --safira-secondary: #7b2dff;
+    --safira-dark: #0a0e23;
+    --safira-light: #e0f8ff;
+    --safira-accent: #ff2d7b;
+    --safira-glass: rgba(10, 14, 35, 0.8);
+    --safira-neon-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+}
+
+/* Base Styles */
+.safira-chatbot-container {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 380px;
+    max-width: 95vw;
+    height: 65vh;
+    min-height: 500px;
+    max-height: 700px;
+    background: var(--safira-glass);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+    inset 0 0 15px rgba(0, 240, 255, 0.2),
+    0 0 20px var(--safira-neon-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9998;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.safira-chatbot-container.active {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Header */
+.safira-chatbot-header {
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.1), rgba(123, 45, 255, 0.1));
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+}
+
+.safira-status-indicator {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--safira-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #00ff88;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.6; transform: scale(1); }
+}
+
+.safira-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: relative;
+    border: 2px solid rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+}
+
+.holographic-effect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg,
+    rgba(0, 240, 255, 0.1),
+    rgba(123, 45, 255, 0.1),
+    rgba(255, 45, 123, 0.1));
+    border-radius: inherit;
+    animation: hologram 8s infinite linear;
+    opacity: 0.7;
+}
+
+@keyframes hologram {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.safira-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+}
+
+.safira-info {
+    flex: 1;
+}
+
+.safira-info h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--safira-primary);
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+}
+
+.safira-info p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: rgba(224, 248, 255, 0.7);
+}
+
+.safira-close {
+    background: none;
+    border: none;
+    color: var(--safira-light);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.7;
+}
+
+.safira-close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+/* Messages Area */
+.safira-chatbot-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: rgba(5, 8, 25, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.safira-message-bubble {
+    max-width: 80%;
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-message {
+    background: rgba(10, 20, 40, 0.7);
+    color: var(--safira-light);
+    align-self: flex-start;
+    border-bottom-left-radius: 5px;
+    border: 1px solid rgba(0, 240, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-message {
+    background: linear-gradient(135deg, var(--safira-secondary), var(--safira-primary));
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 2px 15px rgba(123, 45, 255, 0.3);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    padding: 10px 15px;
+    align-self: flex-start;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background: var(--safira-primary);
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 3px;
+    animation: typing 1s infinite ease-in-out;
+    box-shadow: 0 0 5px var(--safira-primary);
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Quick Replies */
+.safira-quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.safira-quick-reply {
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--safira-primary);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.safira-quick-reply:hover {
+    background: rgba(0, 240, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Input Area */
+.safira-input-container {
+    padding: 15px;
+    background: rgba(10, 14, 35, 0.7);
+    border-top: 1px solid rgba(0, 240, 255, 0.1);
+}
+
+.safira-input-wrapper {
+    display: flex;
+    position: relative;
+}
+
+.safira-input-wrapper input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 20px;
+    padding: 12px 50px 12px 20px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.safira-input-wrapper input:focus {
+    border-color: var(--safira-primary);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.safira-input-wrapper button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--safira-primary);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.safira-input-wrapper button:hover {
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+#safiraMicBtn {
+    right: 45px;
+    color: var(--safira-accent);
+}
+
+/* Suggestions */
+.safira-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.safira-suggestion {
+    background: rgba(123, 45, 255, 0.1);
+    color: var(--safira-light);
+    border: 1px solid rgba(123, 45, 255, 0.3);
+    border-radius: 15px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.safira-suggestion:hover {
+    background: rgba(123, 45, 255, 0.2);
+}
+
+/* Watermark */
+.safira-watermark {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: rgba(224, 248, 255, 0.3);
+    letter-spacing: 1px;
+}
+
+/* Toggle Button */
+.safira-toggle-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, var(--safira-secondary), var(--safira-primary));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 20px 15px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3),
+    0 0 15px var(--safira-neon-shadow);
+    z-index: 9999;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.safira-toggle-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4),
+    0 0 20px var(--safira-neon-shadow);
+}
+
+.safira-toggle-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.safira-toggle-icon img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+}
+
+.pulse-text {
+    position: relative;
+}
+
+.pulse-text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: var(--safira-primary);
+    animation: pulseUnderline 2s infinite;
+}
+
+@keyframes pulseUnderline {
+    0% { transform: scaleX(0); opacity: 0; }
+    50% { transform: scaleX(1); opacity: 1; }
+    100% { transform: scaleX(0); opacity: 0; }
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--safira-accent);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+/* Form Elements */
+.safira-form-group {
+    margin-top: 15px;
+}
+
+.safira-form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--safira-primary);
+    font-size: 13px;
+}
+
+.safira-form-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.safira-form-input:focus {
+    border-color: var(--safira-primary);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.safira-form-select {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px 15px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300f0ff'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+}
+
+.safira-form-button {
+    background: linear-gradient(135deg, var(--safira-secondary), var(--safira-primary));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.safira-form-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(123, 45, 255, 0.4);
+}
+
+/* Loading Animation */
+.safira-loading {
+    display: inline-block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+.safira-loading div {
+    position: absolute;
+    border: 2px solid var(--safira-primary);
+    opacity: 1;
+    border-radius: 50%;
+    animation: safira-loading 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.safira-loading div:nth-child(2) {
+    animation-delay: -0.5s;
+}
+
+@keyframes safira-loading {
+    0% {
+        top: 10px;
+        left: 10px;
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        opacity: 0;
+    }
+}
+
+/* Mobile Close Button */
+.safira-mobile-close {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 45, 123, 0.2);
+    border: 1px solid var(--safira-accent);
+    color: white;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.safira-mobile-close i {
+    font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .safira-chatbot-container {
+        width: 100vw;
+        height: 85vh;
+        max-height: none;
+        right: 0;
+        bottom: 0;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .safira-toggle-btn {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 15px;
+    }
+
+    .safira-toggle-btn span:not(.notification-badge) {
+        display: none;
+    }
+
+    .safira-chatbot-header {
+        padding: 12px 15px;
+    }
+
+    .safira-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .safira-info h3 {
+        font-size: 16px;
+    }
+
+    .safira-info p {
+        font-size: 11px;
+    }
+
+    .safira-chatbot-messages {
+        padding: 15px 12px;
+    }
+
+    .safira-message-bubble {
+        max-width: 85%;
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .safira-input-container {
+        padding: 12px;
+    }
+
+    .safira-input-wrapper input {
+        padding: 10px 45px 10px 15px;
+    }
+
+    #safiraMicBtn {
+        right: 40px;
+    }
+}
+
+/* iPhone Notch/Punch-hole Safe Areas */
+@supports (padding: max(0px)) {
+    @media (max-width: 480px) {
+        .safira-chatbot-container {
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+
+        .safira-toggle-btn {
+            right: max(15px, env(safe-area-inset-right));
+            bottom: max(15px, env(safe-area-inset-bottom));
+        }
+    }
+}
