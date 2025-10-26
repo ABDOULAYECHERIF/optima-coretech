@@ -1,945 +1,1157 @@
 ﻿<!DOCTYPE html>
 <html lang="zxx">
-  <head>
-    <meta charset="utf-8">
-    <meta name="keywords" content="HTML5 Template">
-    <meta name="description" content="Optima CoreTech - IT Solutions and Services Company ">
-    <meta name="author" content="optimacoretech.com">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Optima CoreTech - IT Solutions and Services Company </title>
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="images/favicon.ico">
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Russo+One&display=swap" rel="stylesheet">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="HTML5 Template">
+  <meta name="description" content="Optima CoreTech - IT Solutions and Services Company ">
+  <meta name="author" content="optimacoretech.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Optima CoreTech - IT Solutions and Services Company </title>
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="images/favicon.ico">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Russo+One&display=swap" rel="stylesheet">
 
-    <!-- CSS Global Compulsory (Do not remove)-->
-    <link rel="stylesheet" href="css/font-awesome/all.min.css">
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
-    <!-- Page CSS Implementing Plugins (Remove the plugin CSS here if site does not use that feature)-->
-    <link rel="stylesheet" href="css/owl-carousel/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/swiper/swiper.min.css">
-    <link rel="stylesheet" href="css/magnific-popup/magnific-popup.css">
-    <!-- Template Style -->
-    <link rel="stylesheet" href="css/style.css">
+  <!-- CSS Global Compulsory (Do not remove)-->
+  <link rel="stylesheet" href="css/font-awesome/all.min.css">
+  <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+  <!-- Page CSS Implementing Plugins (Remove the plugin CSS here if site does not use that feature)-->
+  <link rel="stylesheet" href="css/owl-carousel/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/swiper/swiper.min.css">
+  <link rel="stylesheet" href="css/magnific-popup/magnific-popup.css">
+  <!-- Template Style -->
+  <link rel="stylesheet" href="css/style.css">
 
-    <style>
-      /* Chatbot Container */
+  <style>
+    /* Chatbot Container */
+    .chatbot-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 9999;
+      font-family: 'Jost', sans-serif;
+    }
+
+    /* Chat Button */
+    .chatbot-button {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1000;
+    }
+
+    .chatbot-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .chatbot-button::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #ff6b6b, #6e8efb, #a777e3, #6e8efb);
+      z-index: -1;
+      border-radius: 50%;
+      background-size: 400%;
+      animation: glowing 20s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .chatbot-button:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes glowing {
+      0% { background-position: 0 0; }
+      50% { background-position: 400% 0; }
+      100% { background-position: 0 0; }
+    }
+
+    .chatbot-button i {
+      font-size: 28px;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    .chatbot-button.active i {
+      transform: rotate(360deg);
+    }
+
+    .chatbot-notification {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 22px;
+      height: 22px;
+      background: #ff6b6b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+    }
+
+    /* Chat Window */
+    .chatbot-window {
+      position: absolute;
+      bottom: 90px;
+      right: 0;
+      width: 380px;
+      max-width: 90vw;
+      height: 500px;
+      max-height: 70vh;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(20px) scale(0.9);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .chatbot-window.active {
+      display: flex;
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    /* Chat Header */
+    .chatbot-header {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      padding: 15px 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .chatbot-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .chatbot-header-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .chatbot-avatar {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+    }
+
+    .chatbot-avatar::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: conic-gradient(
+              #6e8efb,
+              #a777e3,
+              #ff6b6b,
+              #6e8efb
+      );
+      border-radius: 50%;
+      animation: rotate 3s linear infinite;
+      z-index: 0;
+    }
+
+    .chatbot-avatar img {
+      width: 75%;
+      height: 75%;
+      object-fit: contain;
+      z-index: 1;
+      position: relative;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .chatbot-title {
+      font-weight: 600;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .online-indicator {
+      width: 7px;
+      height: 7px;
+      background: #4cd964;
+      border-radius: 50%;
+      margin-left: 6px;
+      position: relative;
+    }
+
+    .online-indicator::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #4cd964;
+      border-radius: 50%;
+      animation: pulse-online 2s infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes pulse-online {
+      0% { transform: scale(1); opacity: 0.6; }
+      70% { transform: scale(2.5); opacity: 0; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    .chatbot-subtitle {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .chatbot-close {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .chatbot-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Chat Body */
+    .chatbot-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar for chat body */
+    .chatbot-body::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .chatbot-body::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+    }
+
+    .chatbot-body::-webkit-scrollbar-thumb {
+      background: rgba(110, 142, 251, 0.5);
+      border-radius: 8px;
+    }
+
+    .chatbot-body::-webkit-scrollbar-thumb:hover {
+      background: rgba(110, 142, 251, 0.7);
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      animation: fadeIn 0.3s ease;
+      position: relative;
+      line-height: 1.4;
+      word-wrap: break-word;
+      font-size: 14px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bot-message {
+      background: white;
+      border-top-left-radius: 5px;
+      align-self: flex-start;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .user-message {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: white;
+      border-top-right-radius: 5px;
+      align-self: flex-end;
+    }
+
+    .message-time {
+      font-size: 9px;
+      opacity: 0.7;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 10px 14px;
+      border-radius: 16px;
+      border-top-left-radius: 5px;
+      align-self: flex-start;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      width: fit-content;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: #a777e3;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: typingAnimation 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingAnimation {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-4px); }
+    }
+
+    /* Options */
+    .options-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .option-button {
+      background: rgba(110, 142, 251, 0.1);
+      border: 1px solid rgba(110, 142, 251, 0.3);
+      border-radius: 14px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #6e8efb;
+    }
+
+    .option-button:hover {
+      background: rgba(110, 142, 251, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 6px rgba(110, 142, 251, 0.2);
+    }
+
+    /* Input Area */
+    .chatbot-input-area {
+      padding: 12px;
+      background: white;
+      border-top: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .chatbot-input {
+      flex: 1;
+      border: 1px solid #eee;
+      border-radius: 18px;
+      padding: 10px 40px 10px 15px;
+      outline: none;
+      transition: all 0.3s ease;
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+    }
+
+    .chatbot-input:focus {
+      border-color: #6e8efb;
+      box-shadow: 0 0 0 2px rgba(110, 142, 251, 0.2);
+    }
+
+    .voice-input {
+      position: absolute;
+      right: 65px;
+      background: transparent;
+      border: none;
+      color: #6e8efb;
+      cursor: pointer;
+      font-size: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .voice-input:hover {
+      background: rgba(110, 142, 251, 0.1);
+    }
+
+    .voice-input.listening {
+      color: #ff6b6b;
+      animation: pulse-voice 1.5s infinite;
+    }
+
+    @keyframes pulse-voice {
+      0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(255, 107, 107, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+    }
+
+    .chatbot-send {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-left: 8px;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .chatbot-send:hover {
+      transform: rotate(15deg) scale(1.05);
+      box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
+    }
+
+    /* Form Elements */
+    .form-input {
+      width: 100%;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      outline: none;
+      transition: all 0.3s ease;
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+    }
+
+    .form-input:focus {
+      border-color: #6e8efb;
+      box-shadow: 0 0 0 2px rgba(110, 142, 251, 0.2);
+    }
+
+    .form-submit {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
+    }
+
+    /* Voice feedback element */
+    .voice-feedback {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      right: 0;
+      padding: 8px 12px;
+      background: rgba(110, 142, 251, 0.9);
+      color: white;
+      text-align: center;
+      display: none;
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
       .chatbot-container {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        z-index: 9999;
-        font-family: 'Jost', sans-serif;
+        bottom: 15px;
+        right: 15px;
       }
 
-      /* Chat Button */
       .chatbot-button {
-        width: 70px;
-        height: 70px;
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        z-index: 1000;
-      }
-
-      .chatbot-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-      }
-
-      .chatbot-button::before {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        background: linear-gradient(45deg, #ff6b6b, #6e8efb, #a777e3, #6e8efb);
-        z-index: -1;
-        border-radius: 50%;
-        background-size: 400%;
-        animation: glowing 20s linear infinite;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .chatbot-button:hover::before {
-        opacity: 1;
-      }
-
-      @keyframes glowing {
-        0% { background-position: 0 0; }
-        50% { background-position: 400% 0; }
-        100% { background-position: 0 0; }
+        width: 55px;
+        height: 55px;
       }
 
       .chatbot-button i {
-        font-size: 28px;
-        color: white;
-        transition: transform 0.3s ease;
+        font-size: 22px;
       }
 
-      .chatbot-button.active i {
-        transform: rotate(360deg);
-      }
-
-      .chatbot-notification {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        width: 22px;
-        height: 22px;
-        background: #ff6b6b;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-        animation: pulse 2s infinite;
-      }
-
-      @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
-        70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
-      }
-
-      /* Chat Window */
       .chatbot-window {
-        position: absolute;
-        bottom: 90px;
+        width: calc(100vw - 30px);
         right: 0;
-        width: 380px;
-        max-width: 90vw;
-        height: 500px;
-        max-height: 70vh;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        display: none;
-        flex-direction: column;
-        overflow: hidden;
-        transform: translateY(20px) scale(0.9);
-        opacity: 0;
-        transition: all 0.3s ease;
-        z-index: 999;
+        bottom: 70px;
+        height: 60vh;
+        border-radius: 14px;
       }
 
-      .chatbot-window.active {
-        display: flex;
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-
-      /* Chat Header */
       .chatbot-header {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        padding: 15px 20px;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
-      }
-
-      .chatbot-header::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      .chatbot-header-info {
-        display: flex;
-        align-items: center;
+        padding: 12px 15px;
       }
 
       .chatbot-avatar {
-        width: 40px;
-        height: 40px;
-        background: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 12px;
-        overflow: hidden;
-        position: relative;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
-      }
-
-      .chatbot-avatar::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: conic-gradient(
-                #6e8efb,
-                #a777e3,
-                #ff6b6b,
-                #6e8efb
-        );
-        border-radius: 50%;
-        animation: rotate 3s linear infinite;
-        z-index: 0;
-      }
-
-      .chatbot-avatar img {
-        width: 75%;
-        height: 75%;
-        object-fit: contain;
-        z-index: 1;
-        position: relative;
-      }
-
-      @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+        width: 36px;
+        height: 36px;
+        margin-right: 10px;
       }
 
       .chatbot-title {
-        font-weight: 600;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-      }
-
-      .online-indicator {
-        width: 7px;
-        height: 7px;
-        background: #4cd964;
-        border-radius: 50%;
-        margin-left: 6px;
-        position: relative;
-      }
-
-      .online-indicator::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: #4cd964;
-        border-radius: 50%;
-        animation: pulse-online 2s infinite;
-        opacity: 0.6;
-      }
-
-      @keyframes pulse-online {
-        0% { transform: scale(1); opacity: 0.6; }
-        70% { transform: scale(2.5); opacity: 0; }
-        100% { transform: scale(2.5); opacity: 0; }
+        font-size: 15px;
       }
 
       .chatbot-subtitle {
-        font-size: 11px;
-        opacity: 0.8;
-        margin-top: 2px;
-      }
-
-      .chatbot-close {
-        background: transparent;
-        border: none;
-        color: white;
-        cursor: pointer;
-        font-size: 16px;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-      }
-
-      .chatbot-close:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      /* Chat Body */
-      .chatbot-body {
-        flex: 1;
-        padding: 15px;
-        overflow-y: auto;
-        background: #f8f9fa;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        scroll-behavior: smooth;
-      }
-
-      /* Custom scrollbar for chat body */
-      .chatbot-body::-webkit-scrollbar {
-        width: 5px;
-      }
-
-      .chatbot-body::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 8px;
-      }
-
-      .chatbot-body::-webkit-scrollbar-thumb {
-        background: rgba(110, 142, 251, 0.5);
-        border-radius: 8px;
-      }
-
-      .chatbot-body::-webkit-scrollbar-thumb:hover {
-        background: rgba(110, 142, 251, 0.7);
+        font-size: 10px;
       }
 
       .message {
-        max-width: 85%;
-        padding: 10px 14px;
-        border-radius: 16px;
-        animation: fadeIn 0.3s ease;
-        position: relative;
-        line-height: 1.4;
-        word-wrap: break-word;
-        font-size: 14px;
-      }
-
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      .bot-message {
-        background: white;
-        border-top-left-radius: 5px;
-        align-self: flex-start;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      .user-message {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        color: white;
-        border-top-right-radius: 5px;
-        align-self: flex-end;
-      }
-
-      .message-time {
-        font-size: 9px;
-        opacity: 0.7;
-        margin-top: 4px;
-        text-align: right;
-      }
-
-      .typing-indicator {
-        display: flex;
-        align-items: center;
-        background: white;
-        padding: 10px 14px;
-        border-radius: 16px;
-        border-top-left-radius: 5px;
-        align-self: flex-start;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        width: fit-content;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      .typing-dot {
-        width: 6px;
-        height: 6px;
-        background: #a777e3;
-        border-radius: 50%;
-        margin: 0 2px;
-        animation: typingAnimation 1.4s infinite ease-in-out;
-      }
-
-      .typing-dot:nth-child(1) { animation-delay: 0s; }
-      .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-      .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-      @keyframes typingAnimation {
-        0%, 60%, 100% { transform: translateY(0); }
-        30% { transform: translateY(-4px); }
-      }
-
-      /* Options */
-      .options-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 8px;
-      }
-
-      .option-button {
-        background: rgba(110, 142, 251, 0.1);
-        border: 1px solid rgba(110, 142, 251, 0.3);
-        border-radius: 14px;
-        padding: 6px 12px;
-        font-size: 12px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        color: #6e8efb;
-      }
-
-      .option-button:hover {
-        background: rgba(110, 142, 251, 0.2);
-        transform: translateY(-2px);
-        box-shadow: 0 3px 6px rgba(110, 142, 251, 0.2);
-      }
-
-      /* Input Area */
-      .chatbot-input-area {
-        padding: 12px;
-        background: white;
-        border-top: 1px solid #eee;
-        display: flex;
-        align-items: center;
-        position: relative;
-      }
-
-      .chatbot-input {
-        flex: 1;
-        border: 1px solid #eee;
-        border-radius: 18px;
-        padding: 10px 40px 10px 15px;
-        outline: none;
-        transition: all 0.3s ease;
-        font-family: 'Jost', sans-serif;
-        font-size: 14px;
-      }
-
-      .chatbot-input:focus {
-        border-color: #6e8efb;
-        box-shadow: 0 0 0 2px rgba(110, 142, 251, 0.2);
-      }
-
-      .voice-input {
-        position: absolute;
-        right: 65px;
-        background: transparent;
-        border: none;
-        color: #6e8efb;
-        cursor: pointer;
-        font-size: 16px;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-      }
-
-      .voice-input:hover {
-        background: rgba(110, 142, 251, 0.1);
-      }
-
-      .voice-input.listening {
-        color: #ff6b6b;
-        animation: pulse-voice 1.5s infinite;
-      }
-
-      @keyframes pulse-voice {
-        0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
-        70% { box-shadow: 0 0 0 8px rgba(255, 107, 107, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
-      }
-
-      .chatbot-send {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-left: 8px;
-        color: white;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        font-size: 14px;
-      }
-
-      .chatbot-send:hover {
-        transform: rotate(15deg) scale(1.05);
-        box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
-      }
-
-      /* Form Elements */
-      .form-input {
-        width: 100%;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 10px 12px;
-        margin-top: 8px;
-        outline: none;
-        transition: all 0.3s ease;
-        font-family: 'Jost', sans-serif;
-        font-size: 14px;
-      }
-
-      .form-input:focus {
-        border-color: #6e8efb;
-        box-shadow: 0 0 0 2px rgba(110, 142, 251, 0.2);
-      }
-
-      .form-submit {
-        background: linear-gradient(135deg, #6e8efb, #a777e3);
-        border: none;
-        border-radius: 8px;
-        padding: 10px 16px;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 12px;
-        transition: all 0.3s ease;
-        font-size: 14px;
-      }
-
-      .form-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
-      }
-
-      /* Voice feedback element */
-      .voice-feedback {
-        position: absolute;
-        bottom: 60px;
-        left: 0;
-        right: 0;
+        max-width: 90%;
         padding: 8px 12px;
-        background: rgba(110, 142, 251, 0.9);
-        color: white;
-        text-align: center;
-        display: none;
         font-size: 13px;
       }
 
-      /* Responsive */
-      @media (max-width: 576px) {
-        .chatbot-container {
-          bottom: 15px;
-          right: 15px;
-        }
-
-        .chatbot-button {
-          width: 55px;
-          height: 55px;
-        }
-
-        .chatbot-button i {
-          font-size: 22px;
-        }
-
-        .chatbot-window {
-          width: calc(100vw - 30px);
-          right: 0;
-          bottom: 70px;
-          height: 60vh;
-          border-radius: 14px;
-        }
-
-        .chatbot-header {
-          padding: 12px 15px;
-        }
-
-        .chatbot-avatar {
-          width: 36px;
-          height: 36px;
-          margin-right: 10px;
-        }
-
-        .chatbot-title {
-          font-size: 15px;
-        }
-
-        .chatbot-subtitle {
-          font-size: 10px;
-        }
-
-        .message {
-          max-width: 90%;
-          padding: 8px 12px;
-          font-size: 13px;
-        }
-
-        .chatbot-body {
-          padding: 12px;
-          gap: 10px;
-        }
-
-        .chatbot-input-area {
-          padding: 10px;
-        }
-
-        .voice-input {
-          right: 55px;
-          width: 32px;
-          height: 32px;
-          font-size: 14px;
-        }
-
-        .chatbot-send {
-          width: 36px;
-          height: 36px;
-          font-size: 13px;
-        }
+      .chatbot-body {
+        padding: 12px;
+        gap: 10px;
       }
 
-      /* Animation for new messages */
-      @keyframes messageSlideIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px) scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
+      .chatbot-input-area {
+        padding: 10px;
       }
 
-      .message {
-        animation: messageSlideIn 0.3s ease forwards;
+      .voice-input {
+        right: 55px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
       }
-    </style>
-  </head>
-  <body>
 
-    <!--=================================
-    cursor -->
-    <div id="cursor">
-      <div class="cursor__circle"></div>
-    </div>
-    <!--=================================
-    cursor -->
+      .chatbot-send {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+      }
+    }
 
-    <!--=================================
-     Chatbot -->
-    <div class="chatbot-container">
-      <div class="chatbot-button">
-        <i class="fas fa-robot"></i>
-        <div class="chatbot-notification">1</div>
+    /* Animation for new messages */
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .message {
+      animation: messageSlideIn 0.3s ease forwards;
+    }
+  </style>
+</head>
+<body>
+
+<!--=================================
+cursor -->
+<div id="cursor">
+  <div class="cursor__circle"></div>
+</div>
+<!--=================================
+cursor -->
+
+<!--=================================
+ Chatbot -->
+<div class="chatbot-container">
+  <div class="chatbot-button">
+    <i class="fas fa-robot"></i>
+    <div class="chatbot-notification">1</div>
+  </div>
+
+  <div class="chatbot-window">
+    <div class="chatbot-header">
+      <div class="chatbot-header-info">
+        <div class="chatbot-avatar">
+          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDUiIGZpbGw9IiM2ZThlZmIiLz4KICA8cGF0aCBkPSJNMzAgNDBIMzVWMzVINDBWNDBINDBWNDVIMzVWNTBIMzBWNDVIMjVWNDBIMzBaIiBmaWxsPSJ3aGl0ZSIvPgogIDxwYXRoIGQ9Ik02NSA0MEg3MFY0NUg3NVY1MEg3MFY1NUg2NVY1MEg2MFY0NUg2NVY0MFoiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI3MCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPg==" alt="Safira AI">
+        </div>
+        <div>
+          <div class="chatbot-title">Safira AI <div class="online-indicator"></div></div>
+          <div class="chatbot-subtitle">Digital Assistant • Online</div>
+        </div>
       </div>
+      <button class="chatbot-close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
 
-      <div class="chatbot-window">
-        <div class="chatbot-header">
-          <div class="chatbot-header-info">
-            <div class="chatbot-avatar">
-              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDUiIGZpbGw9IiM2ZThlZmIiLz4KICA8cGF0aCBkPSJNMzAgNDBIMzVWMzVINDBWNDBINDBWNDVIMzVWNTBIMzBWNDVIMjVWNDBIMzBaIiBmaWxsPSJ3aGl0ZSIvPgogIDxwYXRoIGQ9Ik02NSA0MEg3MFY0NUg3NVY1MEg3MFY1NUg2NVY1MEg2MFY0NUg2NVY0MFoiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI3MCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPg==" alt="Safira AI">
-            </div>
-            <div>
-              <div class="chatbot-title">Safira AI <div class="online-indicator"></div></div>
-              <div class="chatbot-subtitle">Digital Assistant • Online</div>
-            </div>
-          </div>
-          <button class="chatbot-close">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-
-        <div class="chatbot-body" id="chatbot-messages">
-          <div class="message bot-message">
-            Hi there! 👋 I'm Safira, your AI assistant from Optima CoreTech. How can I help you today?
-            <div class="message-time">Just now</div>
-          </div>
-          <div class="message bot-message">
-            Before we begin, may I know your name?
-            <div class="message-time">Just now</div>
-          </div>
-        </div>
-
-        <div class="voice-feedback" id="voice-feedback">
-          Listening... Speak now
-        </div>
-
-        <div class="chatbot-input-area">
-          <input type="text" class="chatbot-input" placeholder="Type your message..." id="chatbot-input">
-          <button class="voice-input" id="voice-input">
-            <i class="fas fa-microphone"></i>
-          </button>
-          <button class="chatbot-send" id="chatbot-send">
-            <i class="fas fa-paper-plane"></i>
-          </button>
-        </div>
+    <div class="chatbot-body" id="chatbot-messages">
+      <div class="message bot-message">
+        Hi there! 👋 I'm Safira, your AI assistant from Optima CoreTech. How can I help you today?
+        <div class="message-time">Just now</div>
+      </div>
+      <div class="message bot-message">
+        Before we begin, may I know your name?
+        <div class="message-time">Just now</div>
       </div>
     </div>
 
-    <!--=================================
-    Chatbot -->
-    
-    <div id="page" class="main">
+    <div class="voice-feedback" id="voice-feedback">
+      Listening... Speak now
+    </div>
 
-      <!--=================================
-      Header -->
-      <header class="header header-default header-sticky header-absolute">
-        <div class="header-inner">
-          <div class="site-logo">
-            <a class="navbar-brand" href="index.html">
-              <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
-            </a>
-          </div>
+    <div class="chatbot-input-area">
+      <input type="text" class="chatbot-input" placeholder="Type your message..." id="chatbot-input">
+      <button class="voice-input" id="voice-input">
+        <i class="fas fa-microphone"></i>
+      </button>
+      <button class="chatbot-send" id="chatbot-send">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
-          <div class="site-menu d-none d-xl-block">
-            <ul class="main-menu">
-              <li class="nav-item active"><a class="nav-link" href="index.html">Home</a>
+<!--=================================
+Chatbot -->
 
-              </li>
-              <li class="nav-item"><a class="nav-link" href="about-us.html">About Us </a>
+<div id="page" class="main">
 
-              </li>
-              <li class="nav-item"><a class="nav-link" href="service.html">Service </a>
+  <!--=================================
+  Header -->
+  <header class="header header-default header-sticky header-absolute">
+    <div class="header-inner">
+      <div class="site-logo">
+        <a class="navbar-brand" href="index.html">
+          <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
+        </a>
+      </div>
 
-              </li>
+      <div class="site-menu d-none d-xl-block">
+        <ul class="main-menu">
+          <li class="nav-item active"><a class="nav-link" href="index.html">Home</a>
+
+          </li>
+          <li class="nav-item"><a class="nav-link" href="about-us.html">About Us </a>
+
+          </li>
+          <li class="nav-item"><a class="nav-link" href="service.html">Service </a>
+
+          </li>
 
 
-              <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
-            </ul>
-          </div>
+          <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
+        </ul>
+      </div>
 
-          <div class="site-action d-none d-xl-block">
-            <div class="action-hamburger">
-              <a class="hamburger" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+      <div class="site-action d-none d-xl-block">
+        <div class="action-hamburger">
+          <a class="hamburger" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                 <span class="hamburger-container">
                   <span class="hamburger-inner"></span>
                   <span class="hamburger-hidden"></span>
                 </span>
-              </a>
-            </div>
-          </div>
-
-          <div class="mobile-action d-block d-xl-none">
-            <div class="mobile-hamburger">
-              <a class="hamburger" href="#" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas">
-                <span class="hamburger-container">
-                  <span class="hamburger-inner"></span>
-                  <span class="hamburger-hidden"></span>
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!--=================================
-      Main Menu OffCanvas -->
-      <div class="offcanvas main-menu-offcanvas offcanvas-end" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
-        <div class="offcanvas-header">
-          <a class="navbar-brand" href="index.html">
-            <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
           </a>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="offcanvas-body lenis-scroll-disable">
-          <div class="body-inner">
-            <nav class="navbar">
-              <ul class="navbar-nav">
+      </div>
 
-                <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+      <div class="mobile-action d-block d-xl-none">
+        <div class="mobile-hamburger">
+          <a class="hamburger" href="#" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas">
+                <span class="hamburger-container">
+                  <span class="hamburger-inner"></span>
+                  <span class="hamburger-hidden"></span>
+                </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
 
-                <li class="nav-item"><a class="nav-link" href="service.html">Service</a></li>
+  <!--=================================
+  Main Menu OffCanvas -->
+  <div class="offcanvas main-menu-offcanvas offcanvas-end" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
+    <div class="offcanvas-header">
+      <a class="navbar-brand" href="index.html">
+        <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
+      </a>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="offcanvas-body lenis-scroll-disable">
+      <div class="body-inner">
+        <nav class="navbar">
+          <ul class="navbar-nav">
+
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+
+            <li class="nav-item"><a class="nav-link" href="service.html">Service</a></li>
 
 
-                <li class="nav-item"><a class="nav-link" href="about-us.html">About Us</a></li>
+            <li class="nav-item"><a class="nav-link" href="about-us.html">About Us</a></li>
 
-                <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
-              </ul>
-            </nav>
-            <div class="bottom-info">
-              <div class="contact-info">
-                <span class="number">+32 465 856 075</span>
-                <a class="mail" href="#"><i class="fa-regular fa-envelope"></i>optimacoretech@outlook.com</a>
-                <span class="text">Looking for collaboration for your next creative project?</span>
+            <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
+          </ul>
+        </nav>
+        <div class="bottom-info">
+          <div class="contact-info">
+            <span class="number">+32 465 856 075</span>
+            <a class="mail" href="mailto:optimacoretech@outlook.com"><i class="fa-regular fa-envelope"></i>optimacoretech@outlook.com</a>
+            <span class="text">Looking for collaboration for your next creative project?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--=================================
+     Header Side Panel -->
+  <div class="offcanvas offcanvas-end sidepanel-offcanvas" tabindex="-1" id="offcanvasRight">
+    <div class="offcanvas-header">
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="offcanvas-body lenis-scroll-disable">
+      <div class="body-inner">
+        <!-- About Section -->
+        <div class="about-info">
+          <h4 class="title mb-3">Empowering Your Digital Growth</h4>
+          <p>We help startups and businesses scale through cutting-edge web development, strategic IT solutions, and seamless user experiences.</p>
+        </div>
+
+        <!-- Social Links -->
+        <div class="social-info mt-4">
+          <ul class="social-list-item">
+            <li><a href="#"><i class="fa-brands fa-facebook-f"></i> Facebook</a></li>
+            <li><a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a></li>
+            <li><a href="#"><i class="fa-brands fa-x-twitter"></i> Twitter</a></li>
+            <li><a href="#"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info mt-4">
+          <span class="number">+32 465 856 075</span>
+          <a class="mail" href="mailto:info@yourcompany.com">
+            <i class="fa-regular fa-envelope"></i> optimacoretech@outlook.com
+          </a>
+          <span class="text d-block mt-2">Looking for collaboration on your next big project? Let's connect.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--=================================
+        Header Side Panel -->
+
+
+
+  <div class="site-content">
+
+    <div class="container-fluid">
+      <div class="item-efftect">
+        <div class="efftect overflow-hidden"></div>
+        <div class="efftect overflow-hidden"></div>
+        <div class="efftect overflow-hidden"></div>
+        <div class="efftect overflow-hidden"></div>
+        <div class="efftect overflow-hidden"></div>
+      </div>
+    </div>
+
+    <!--=================================
+    Main Banner -->
+    <div class="main-banner main-banner-1">
+      <div class="banner-inner">
+        <img class="img-fluid banner-bg-one" src="images/banner/banner-01/banner-bg-01.png" alt="#">
+        <h1 class="banner-title">OC TECH</h1>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <img class="img-fluid rotate rotate-img" src="images/banner/banner-01/banner-shape-01.png" alt="#">
+            </div>
+            <div class="col-md-6 ms-auto">
+              <div class="banner-content">
+                <h2>Emphasizing optimized IT services.</h2>
+                <a class="btn btn-effect" href="contact-us.html">
+                  <span>Get A Quote</span>
+                  <svg width="20" height="22" viewbox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_59_253)"><path d="M19.4854 11.4293L17.0513 12.221C13.1214 13.4993 10.3036 16.9595 9.84784 21.0668C9.49371 16.981 6.71926 13.5081 2.81255 12.2604L0.210283 11.4293" stroke="white" stroke-width="2"></path><path d="M9.83594 20.8889L9.83594 0" stroke="white" stroke-width="2"></path></g><defs><clippath id="clip0_59_253"><rect width="21.3333" height="20" fill="white" transform="translate(20) rotate(90)"></rect></clippath></defs></svg>
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!--=================================
-         Header Side Panel -->
-      <div class="offcanvas offcanvas-end sidepanel-offcanvas" tabindex="-1" id="offcanvasRight">
-        <div class="offcanvas-header">
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
+    <div class="content-wrapper">
 
-        <div class="offcanvas-body lenis-scroll-disable">
-          <div class="body-inner">
-            <!-- About Section -->
-            <div class="about-info">
-              <h4 class="title mb-3">Empowering Your Digital Growth</h4>
-              <p>We help startups and businesses scale through cutting-edge web development, strategic IT solutions, and seamless user experiences.</p>
-            </div>
+      <section class="space-pt">
+        <div class="container">
+          <div class="row justify-content-between">
 
-            <!-- Social Links -->
-            <div class="social-info mt-4">
-              <ul class="social-list-item">
-                <li><a href="#"><i class="fa-brands fa-facebook-f"></i> Facebook</a></li>
-                <li><a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a></li>
-                <li><a href="#"><i class="fa-brands fa-x-twitter"></i> Twitter</a></li>
-                <li><a href="#"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a></li>
-              </ul>
-            </div>
+            <div class="col-lg-7 mb-5 mb-lg-0">
+              <div class="section-title pb-0 pb-lg-4">
+                <span class="sub-title"><img class="img-fluid" src="images/subtitle-icon.png" alt=""> About Us</span>
+                <h2 class="title"> Your Success is Our Core Objective </h2>
+              </div>
 
-            <!-- Contact Info -->
-            <div class="contact-info mt-4">
-              <span class="number">+32 465 856 075</span>
-              <a class="mail" href="mailto:info@yourcompany.com">
-                <i class="fa-regular fa-envelope"></i> optimacoretech@outlook.com
-              </a>
-              <span class="text d-block mt-2">Looking for collaboration on your next big project? Let's connect.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--=================================
-            Header Side Panel -->
-
-
-
-      <div class="site-content">
-
-      <div class="container-fluid">
-        <div class="item-efftect">
-           <div class="efftect overflow-hidden"></div>
-           <div class="efftect overflow-hidden"></div>
-           <div class="efftect overflow-hidden"></div>
-           <div class="efftect overflow-hidden"></div>
-           <div class="efftect overflow-hidden"></div>
-        </div>
-      </div>
-
-        <!--=================================
-        Main Banner -->
-        <div class="main-banner main-banner-1">
-          <div class="banner-inner">
-            <img class="img-fluid banner-bg-one" src="images/banner/banner-01/banner-bg-01.png" alt="#">
-            <h1 class="banner-title">OC TECH</h1>
-            <div class="container">
               <div class="row">
-                <div class="col-md-6">
-                  <img class="img-fluid rotate rotate-img" src="images/banner/banner-01/banner-shape-01.png" alt="#">
+                <div class="col-sm-4">
+                  <img class="img-fluid" src="images/LETS%20BUILD.png" alt="#">
                 </div>
-                <div class="col-md-6 ms-auto">
-                  <div class="banner-content">
-                    <h2>Emphasizing optimized IT services.</h2>
-                    <a class="btn btn-effect" href="contact-us.html">
-                      <span>Get A Quote</span>
-                      <svg width="20" height="22" viewbox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_59_253)"><path d="M19.4854 11.4293L17.0513 12.221C13.1214 13.4993 10.3036 16.9595 9.84784 21.0668C9.49371 16.981 6.71926 13.5081 2.81255 12.2604L0.210283 11.4293" stroke="white" stroke-width="2"></path><path d="M9.83594 20.8889L9.83594 0" stroke="white" stroke-width="2"></path></g><defs><clippath id="clip0_59_253"><rect width="21.3333" height="20" fill="white" transform="translate(20) rotate(90)"></rect></clippath></defs></svg>
+                <div class="col-sm-8">
+                  <p class="ps-lg-3 mt-4 mt-sm-0">At OptimaCoreTech, we are dedicated to driving digital transformation and delivering tailored technology solutions. We empower businesses with cutting-edge software development, cloud services, and data analytics to optimize their core operations and achieve sustainable growth.</p>
+                  <div class="d-flex justify-content-center mt-5 ms-sm-5 ms-0">
+                    <a class="btn btn-effect" href="about-us.html">
+                      <span>About Us</span>
+                      <svg width="20" height="22" viewbox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_59_254)"><path d="M19.4854 11.4293L17.0513 12.221C13.1214 13.4993 10.3036 16.9595 9.84784 21.0668C9.49371 16.981 6.71926 13.5081 2.81255 12.2604L0.210283 11.4293" stroke="white" stroke-width="2"></path><path d="M9.83594 20.8889L9.83594 0" stroke="white" stroke-width="2"></path></g><defs><clippath id="clip0_59_254"><rect width="21.3333" height="20" fill="white" transform="translate(20) rotate(90)"></rect></clippath></defs></svg>
                     </a>
                   </div>
                 </div>
               </div>
+
+              <div class="row mt-4 mt-sm-5">
+                <div class="col-sm-6">
+                  <div class="counter counter-style-1">
+                    <div class="counter-number"><span class="timer mb-0" data-to="240" data-speed="2000">240</span><span class="suffix">+</span></div>
+                    <div class="counter-info"><span class="counter-title">Projects Delivered</span></div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="counter counter-style-1">
+                    <div class="counter-number"><span class="timer mb-0" data-to="100" data-speed="2000">100</span><span class="suffix">%</span></div>
+                    <div class="counter-info"><span class="counter-title">Client Satisfaction</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-5">
+              <img class="img-fluid ps-lg-5" src="images/Green%20and%20Black%20Corporate%20Business%20Instagram%20Post.png" alt="#">
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <!--=================================
+      About Info -->
+      <!--=================================
+      Client Logo -->
+      <div class="space-medium-ptb">
+        <div class="container-fluid p-0">
+          <div class="row g-0">
+            <div class="col-md-12">
+              <div class="marquee-wrapper">
+                <div class="marquee-inner">
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon1.png" alt=""></span>
+                    <span class="title">Web Design</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon2.png" alt=""></span>
+                    <span class="title">UI/UX Design</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon3.png" alt=""></span>
+                    <span class="title">Developer</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon4.png" alt=""></span>
+                    <span class="title">ISO Developer</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon5.png" alt=""></span>
+                    <span class="title">Digital Agency</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon1.png" alt=""></span>
+                    <span class="title">Web Design</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon2.png" alt=""></span>
+                    <span class="title">UI/UX Design</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon3.png" alt=""></span>
+                    <span class="title">Developer</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon4.png" alt=""></span>
+                    <span class="title">ISO Developer</span>
+                  </div>
+                  <div class="marquee-item">
+                    <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon5.png" alt=""></span>
+                    <span class="title">Digital Agency</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+      <!--=================================
+      Client Logo -->
 
-        <div class="content-wrapper">
-
-          <section class="space-pt">
-            <div class="container">
-              <div class="row justify-content-between">
-
-                <div class="col-lg-7 mb-5 mb-lg-0">
-                  <div class="section-title pb-0 pb-lg-4">
-                    <span class="sub-title"><img class="img-fluid" src="images/subtitle-icon.png" alt=""> About Us</span>
-                    <h2 class="title"> Your Success is Our Core Objective </h2>
+      <!--=================================
+          Our Services -->
+      <section class="space-pt bg-black z-index-2 ellipse-top">
+        <div class="space-pb ellipse-bottom">
+          <div class="container">
+            <div class="row justify-content-between">
+              <div class="col-xxl-5 col-xl-5 mb-5 mb-xl-0">
+                <div class="sticky-top" style="top: 80px;">
+                  <div class="section-title">
+                    <span class="sub-title"><img class="img-fluid" src="images/subtitle-icon.png" alt=""> Our Process</span>
+                    <h2 class="title">Web Development & Digital Solutions for Real Growth.</h2>
                   </div>
-
-                  <div class="row">
-                    <div class="col-sm-4">
-                      <img class="img-fluid" src="images/about/about-03.jpg" alt="#">
-                    </div>
-                    <div class="col-sm-8">
-                      <p class="ps-lg-3 mt-4 mt-sm-0">At OptimaCoreTech, we are dedicated to driving digital transformation and delivering tailored technology solutions. We empower businesses with cutting-edge software development, cloud services, and data analytics to optimize their core operations and achieve sustainable growth.</p>
-                      <div class="d-flex justify-content-center mt-5 ms-sm-5 ms-0">
-                        <a class="btn btn-effect" href="#">
-                          <span>About Us</span>
-                          <svg width="20" height="22" viewbox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_59_254)"><path d="M19.4854 11.4293L17.0513 12.221C13.1214 13.4993 10.3036 16.9595 9.84784 21.0668C9.49371 16.981 6.71926 13.5081 2.81255 12.2604L0.210283 11.4293" stroke="white" stroke-width="2"></path><path d="M9.83594 20.8889L9.83594 0" stroke="white" stroke-width="2"></path></g><defs><clippath id="clip0_59_254"><rect width="21.3333" height="20" fill="white" transform="translate(20) rotate(90)"></rect></clippath></defs></svg>
-                        </a>
-                      </div>
+                  <div class="ps-xxl-5 ms-0 ms-md-5">
+                    <p>At OptimaCoreTech, we specialize in crafting modern, high-performance websites and web applications. From responsive designs to custom-built platforms, we help businesses strengthen their online presence and scale with cutting-edge technology.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-6 col-xl-7">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="services grid-wrapper">
+                      <!-- Web-focused services first -->
+                      <div class="service-wrapper service-style-1"><div class="service-inner">
+                        <div class="service-icon">
+                          <img class="img-fluid" src="images/svg/services/Mobile-Platforms.svg" alt="#">
+                        </div>
+                        <div class="bg-icon">
+                          <img class="img-fluid" src="images/svg/services/color-icon/Mobile-Platforms.svg" alt="#">
+                        </div>
+                        <div class="service-content">
+                          <h5 class="service-title">Web & Mobile Development</h5>
+                          <p>We create seamless, scalable websites and mobile applications tailored to your business needs.</p>
+                          <div class="service-links">
+                            <a class="btn-arrow" href="#"><svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0)"><path d="M8.7 0.96L9.3 2.77C10.25 5.68 12.83 7.77 15.89 8.11C12.84 8.38 10.26 10.43 9.33 13.33L8.7 15.27" stroke="inherit" stroke-width="2"></path><path d="M15.76 8.12H0.19" stroke="inherit" stroke-width="2"></path></g><defs><clipPath id="clip0"><rect width="15.9" height="14.84" fill="inherit" transform="translate(0.19 0.58)"></rect></clipPath></defs></svg></a>
+                          </div>
+                        </div>
+                      </div></div>
+                      <div class="service-wrapper service-style-1"><div class="service-inner">
+                        <div class="service-icon">
+                          <img class="img-fluid" src="images/svg/services/Content-Management.svg" alt="#">
+                        </div>
+                        <div class="bg-icon">
+                          <img class="img-fluid" src="images/svg/services/color-icon/Content-Management.svg" alt="#">
+                        </div>
+                        <div class="service-content">
+                          <h5 class="service-title">Content Management</h5>
+                          <p>We build powerful CMS platforms that give you full control over your website’s content and updates.</p>
+                          <div class="service-links">
+                            <a class="btn-arrow" href="#"><svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip1)"><path d="M8.7 0.96L9.3 2.77C10.25 5.68 12.83 7.77 15.89 8.11C12.84 8.38 10.26 10.43 9.33 13.33L8.7 15.27" stroke="inherit" stroke-width="2"></path><path d="M15.76 8.12H0.19" stroke="inherit" stroke-width="2"></path></g><defs><clipPath id="clip1"><rect width="15.9" height="14.84" fill="inherit" transform="translate(0.19 0.58)"></rect></clipPath></defs></svg></a>
+                          </div>
+                        </div>
+                      </div></div>
+                      <!-- Original services continue -->
+                      <div class="service-wrapper service-style-1"><div class="service-inner">
+                        <div class="service-icon">
+                          <img class="img-fluid" src="images/svg/services/Data-Synchronization.svg" alt="#">
+                        </div>
+                        <div class="bg-icon">
+                          <img class="img-fluid" src="images/svg/services/color-icon/Data-Synchronization.svg" alt="#">
+                        </div>
+                        <div class="service-content">
+                          <h5 class="service-title">Data Synchronization</h5>
+                          <p>We integrate your platforms and databases to ensure seamless data flow across your systems.</p>
+                        </div>
+                      </div></div>
                     </div>
                   </div>
-
-                  <div class="row mt-4 mt-sm-5">
-                    <div class="col-sm-6">
-                      <div class="counter counter-style-1">
-                        <div class="counter-number"><span class="timer mb-0" data-to="240" data-speed="2000">240</span><span class="suffix">+</span></div>
-                        <div class="counter-info"><span class="counter-title">Projects Delivered</span></div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="counter counter-style-1">
-                        <div class="counter-number"><span class="timer mb-0" data-to="100" data-speed="2000">100</span><span class="suffix">%</span></div>
-                        <div class="counter-info"><span class="counter-title">Client Satisfaction</span></div>
-                      </div>
+                  <div class="col-sm-6">
+                    <div class="services grid-wrapper service-top-space">
+                      <!-- Remaining services -->
+                      <div class="service-wrapper service-style-1"><div class="service-inner">
+                        <div class="service-icon">
+                          <img class="img-fluid" src="images/svg/services/Information-Security.svg" alt="#">
+                        </div>
+                        <div class="bg-icon">
+                          <img class="img-fluid" src="images/svg/services/color-icon/Information-Security.svg" alt="#">
+                        </div>
+                        <div class="service-content">
+                          <h5 class="service-title">Information Security</h5>
+                          <p>We protect your business with advanced cybersecurity measures to keep your data secure.</p>
+                        </div>
+                      </div></div>
+                      <div class="service-wrapper service-style-1"><div class="service-inner">
+                        <div class="service-icon">
+                          <img class="img-fluid" src="images/svg/services/Process-Automation.svg" alt="#">
+                        </div>
+                        <div class="bg-icon">
+                          <img class="img-fluid" src="images/svg/services/color-icon/Process-Automation.svg" alt="#">
+                        </div>
+                        <div class="service-content">
+                          <h5 class="service-title">Process Automation</h5>
+                          <p>We streamline your workflows with automation to boost efficiency and reduce manual errors.</p>
+                        </div>
+                      </div></div>
+                      <div class="service-wrapper service-style-1"><div class="service-inner">
+                        <div class="service-icon">
+                          <img class="img-fluid" src="images/svg/services/Event-Processing.svg" alt="#">
+                        </div>
+                        <div class="bg-icon">
+                          <img class="img-fluid" src="images/svg/services/color-icon/Event-Processing.svg" alt="#">
+                        </div>
+                        <div class="service-content">
+                          <h5 class="service-title">Event Processing</h5>
+                          <p>We optimize event-driven systems, from notifications to real-time triggers.</p>
+                        </div>
+                      </div></div>
                     </div>
                   </div>
                 </div>
-
-                <div class="col-lg-5">
-                  <img class="img-fluid ps-lg-5" src="images/about/about-01.jpg" alt="#">
-                </div>
-
               </div>
             </div>
-          </section>
-          <!--=================================
-          About Info -->
-          <!--=================================
-          Client Logo -->
-          <div class="space-medium-ptb">
-            <div class="container-fluid p-0">
-              <div class="row g-0">
-                <div class="col-md-12">
-                  <div class="marquee-wrapper">
-                    <div class="marquee-inner">
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon1.png" alt=""></span>
-                        <span class="title">Web Design</span>
+          </div>
+        </div>
+      </section>
+      <!--=================================
+                Our Services -->
+
+
+
+
+      <!--=================================
+Projects Showcase -->
+      <section class="space-ptb">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-10 text-center">
+              <div class="section-title">
+                <span class="sub-title"><img class="img-fluid" src="images/subtitle-icon.png" alt=""> Our Work</span>
+                <h2 class="title">Recent Projects</h2>
+                <p class="mb-0">Explore some of our latest web development and digital solution projects</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-5">
+            <div class="col-md-12">
+              <div class="projects-showcase">
+                <!-- Project 1 -->
+                <div class="project-item">
+                  <div class="project-image">
+                    <img src="https://cdn.dribbble.com/userupload/14706292/file/original-70f7e2f3b45ca013e9667ef2de249128.jpg?resize=1600x1200" alt="E-commerce Website">
+                    <div class="project-overlay">
+                      <div class="project-info">
+                        <h4>E-commerce Website</h4>
+                        <p>Modern online store with seamless checkout experience</p>
+
                       </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon2.png" alt=""></span>
-                        <span class="title">UI/UX Design</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-item">
+                  <div class="project-image">
+                    <img src="https://catchthemes.com/wp-content/uploads/2020/09/business-focus.jpg" alt="Corporate Website">
+                    <div class="project-overlay">
+                      <div class="project-info">
+                        <h4>Corporate Website</h4>
+                        <p>Professional website for a financial consulting firm</p>
+
                       </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon3.png" alt=""></span>
-                        <span class="title">Developer</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="project-item">
+                  <div class="project-image">
+                    <img src="https://cdn.dribbble.com/userupload/5454819/file/original-0f4888a6bcc12674e574a1f3b95c6ac4.jpg?format=webp&resize=1440x&vertical=center" alt="Travel Booking Platform">
+                    <div class="project-overlay">
+                      <div class="project-info">
+                        <h4>Travel Booking Platform</h4>
+                        <p>Comprehensive travel booking system with real-time availability</p>
+
                       </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon4.png" alt=""></span>
-                        <span class="title">ISO Developer</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="project-item">
+                  <div class="project-image">
+                    <img src="https://i.pinimg.com/originals/e6/ef/75/e6ef75a920ce163bb0e02adeb1dee6c3.jpg" alt="Restaurant Website">
+                    <div class="project-overlay">
+                      <div class="project-info">
+                        <h4>Restaurant Website</h4>
+                        <p>Elegant website with online reservation system</p>
+
                       </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon5.png" alt=""></span>
-                        <span class="title">Digital Agency</span>
-                      </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon1.png" alt=""></span>
-                        <span class="title">Web Design</span>
-                      </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon2.png" alt=""></span>
-                        <span class="title">UI/UX Design</span>
-                      </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon3.png" alt=""></span>
-                        <span class="title">Developer</span>
-                      </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon4.png" alt=""></span>
-                        <span class="title">ISO Developer</span>
-                      </div>
-                      <div class="marquee-item">
-                        <span class="icon"><img class="img-fluid" src="images/client-logo/brand-icon5.png" alt=""></span>
-                        <span class="title">Digital Agency</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Project 5 -->
+                <div class="project-item">
+                  <div class="project-image">
+                    <img src="https://cdn.dribbble.com/users/2399102/screenshots/15674769/media/74c89cbcfca137d02cc6b52f3e46ea4c.png" alt="Health & Fitness App">
+                    <div class="project-overlay">
+                      <div class="project-info">
+                        <h4>Health & Fitness App</h4>
+                        <p>Mobile application with workout tracking and nutrition planning</p>
+
                       </div>
                     </div>
                   </div>
@@ -947,1192 +1159,980 @@
               </div>
             </div>
           </div>
-          <!--=================================
-          Client Logo -->
+        </div>
+      </section>
 
-          <!--=================================
-              Our Services -->
-          <section class="space-pt bg-black z-index-2 ellipse-top">
-            <div class="space-pb ellipse-bottom">
-              <div class="container">
-                <div class="row justify-content-between">
-                  <div class="col-xxl-5 col-xl-5 mb-5 mb-xl-0">
-                    <div class="sticky-top" style="top: 80px;">
-                      <div class="section-title">
-                        <span class="sub-title"><img class="img-fluid" src="images/subtitle-icon.png" alt=""> Our Process</span>
-                        <h2 class="title">Web Development & Digital Solutions for Real Growth.</h2>
-                      </div>
-                      <div class="ps-xxl-5 ms-0 ms-md-5">
-                        <p>At OptimaCoreTech, we specialize in crafting modern, high-performance websites and web applications. From responsive designs to custom-built platforms, we help businesses strengthen their online presence and scale with cutting-edge technology.</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-xxl-6 col-xl-7">
-                    <div class="row">
-                      <div class="col-sm-6">
-                        <div class="services grid-wrapper">
-                          <!-- Web-focused services first -->
-                          <div class="service-wrapper service-style-1"><div class="service-inner">
-                            <div class="service-icon">
-                              <img class="img-fluid" src="images/svg/services/Mobile-Platforms.svg" alt="#">
-                            </div>
-                            <div class="bg-icon">
-                              <img class="img-fluid" src="images/svg/services/color-icon/Mobile-Platforms.svg" alt="#">
-                            </div>
-                            <div class="service-content">
-                              <h5 class="service-title">Web & Mobile Development</h5>
-                              <p>We create seamless, scalable websites and mobile applications tailored to your business needs.</p>
-                              <div class="service-links">
-                                <a class="btn-arrow" href="#"><svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0)"><path d="M8.7 0.96L9.3 2.77C10.25 5.68 12.83 7.77 15.89 8.11C12.84 8.38 10.26 10.43 9.33 13.33L8.7 15.27" stroke="inherit" stroke-width="2"></path><path d="M15.76 8.12H0.19" stroke="inherit" stroke-width="2"></path></g><defs><clipPath id="clip0"><rect width="15.9" height="14.84" fill="inherit" transform="translate(0.19 0.58)"></rect></clipPath></defs></svg></a>
-                              </div>
-                            </div>
-                          </div></div>
-                          <div class="service-wrapper service-style-1"><div class="service-inner">
-                            <div class="service-icon">
-                              <img class="img-fluid" src="images/svg/services/Content-Management.svg" alt="#">
-                            </div>
-                            <div class="bg-icon">
-                              <img class="img-fluid" src="images/svg/services/color-icon/Content-Management.svg" alt="#">
-                            </div>
-                            <div class="service-content">
-                              <h5 class="service-title">Content Management</h5>
-                              <p>We build powerful CMS platforms that give you full control over your website’s content and updates.</p>
-                              <div class="service-links">
-                                <a class="btn-arrow" href="#"><svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip1)"><path d="M8.7 0.96L9.3 2.77C10.25 5.68 12.83 7.77 15.89 8.11C12.84 8.38 10.26 10.43 9.33 13.33L8.7 15.27" stroke="inherit" stroke-width="2"></path><path d="M15.76 8.12H0.19" stroke="inherit" stroke-width="2"></path></g><defs><clipPath id="clip1"><rect width="15.9" height="14.84" fill="inherit" transform="translate(0.19 0.58)"></rect></clipPath></defs></svg></a>
-                              </div>
-                            </div>
-                          </div></div>
-                          <!-- Original services continue -->
-                          <div class="service-wrapper service-style-1"><div class="service-inner">
-                            <div class="service-icon">
-                              <img class="img-fluid" src="images/svg/services/Data-Synchronization.svg" alt="#">
-                            </div>
-                            <div class="bg-icon">
-                              <img class="img-fluid" src="images/svg/services/color-icon/Data-Synchronization.svg" alt="#">
-                            </div>
-                            <div class="service-content">
-                              <h5 class="service-title">Data Synchronization</h5>
-                              <p>We integrate your platforms and databases to ensure seamless data flow across your systems.</p>
-                            </div>
-                          </div></div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="services grid-wrapper service-top-space">
-                          <!-- Remaining services -->
-                          <div class="service-wrapper service-style-1"><div class="service-inner">
-                            <div class="service-icon">
-                              <img class="img-fluid" src="images/svg/services/Information-Security.svg" alt="#">
-                            </div>
-                            <div class="bg-icon">
-                              <img class="img-fluid" src="images/svg/services/color-icon/Information-Security.svg" alt="#">
-                            </div>
-                            <div class="service-content">
-                              <h5 class="service-title">Information Security</h5>
-                              <p>We protect your business with advanced cybersecurity measures to keep your data secure.</p>
-                            </div>
-                          </div></div>
-                          <div class="service-wrapper service-style-1"><div class="service-inner">
-                            <div class="service-icon">
-                              <img class="img-fluid" src="images/svg/services/Process-Automation.svg" alt="#">
-                            </div>
-                            <div class="bg-icon">
-                              <img class="img-fluid" src="images/svg/services/color-icon/Process-Automation.svg" alt="#">
-                            </div>
-                            <div class="service-content">
-                              <h5 class="service-title">Process Automation</h5>
-                              <p>We streamline your workflows with automation to boost efficiency and reduce manual errors.</p>
-                            </div>
-                          </div></div>
-                          <div class="service-wrapper service-style-1"><div class="service-inner">
-                            <div class="service-icon">
-                              <img class="img-fluid" src="images/svg/services/Event-Processing.svg" alt="#">
-                            </div>
-                            <div class="bg-icon">
-                              <img class="img-fluid" src="images/svg/services/color-icon/Event-Processing.svg" alt="#">
-                            </div>
-                            <div class="service-content">
-                              <h5 class="service-title">Event Processing</h5>
-                              <p>We optimize event-driven systems, from notifications to real-time triggers.</p>
-                            </div>
-                          </div></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!--=================================
-                    Our Services -->
+      <style>
+        /* Projects Showcase Styles */
+        .projects-showcase {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 25px;
+        }
 
+        .project-item {
+          position: relative;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+          transition: all 0.4s ease;
+        }
 
+        .project-item:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
 
+        .project-image {
+          position: relative;
+          height: 280px;
+          overflow: hidden;
+        }
 
-                    <!--=================================
-  Projects Showcase -->
-                    <section class="space-ptb">
-                      <div class="container">
-                        <div class="row justify-content-center">
-                          <div class="col-md-10 text-center">
-                            <div class="section-title">
-                              <span class="sub-title"><img class="img-fluid" src="images/subtitle-icon.png" alt=""> Our Work</span>
-                              <h2 class="title">Recent Projects</h2>
-                              <p class="mb-0">Explore some of our latest web development and digital solution projects</p>
-                            </div>
-                          </div>
-                        </div>
+        .project-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
 
-                        <div class="row mt-5">
-                          <div class="col-md-12">
-                            <div class="projects-showcase">
-                              <!-- Project 1 -->
-                              <div class="project-item">
-                                <div class="project-image">
-                                  <img src="https://cdn.dribbble.com/userupload/14706292/file/original-70f7e2f3b45ca013e9667ef2de249128.jpg?resize=1600x1200" alt="E-commerce Website">
-                                  <div class="project-overlay">
-                                    <div class="project-info">
-                                      <h4>E-commerce Website</h4>
-                                      <p>Modern online store with seamless checkout experience</p>
+        .project-item:hover .project-image img {
+          transform: scale(1.05);
+        }
 
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+        .project-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+          display: flex;
+          align-items: flex-end;
+          padding: 25px;
+          opacity: 0;
+          transition: opacity 0.4s ease;
+        }
 
-                              <!-- Project 2 -->
-                              <div class="project-item">
-                                <div class="project-image">
-                                  <img src="https://catchthemes.com/wp-content/uploads/2020/09/business-focus.jpg" alt="Corporate Website">
-                                  <div class="project-overlay">
-                                    <div class="project-info">
-                                      <h4>Corporate Website</h4>
-                                      <p>Professional website for a financial consulting firm</p>
+        .project-item:hover .project-overlay {
+          opacity: 1;
+        }
 
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+        .project-info {
+          color: white;
+          transform: translateY(20px);
+          transition: transform 0.4s ease;
+        }
 
-                              <!-- Project 3 -->
-                              <div class="project-item">
-                                <div class="project-image">
-                                  <img src="https://cdn.dribbble.com/userupload/5454819/file/original-0f4888a6bcc12674e574a1f3b95c6ac4.jpg?format=webp&resize=1440x&vertical=center" alt="Travel Booking Platform">
-                                  <div class="project-overlay">
-                                    <div class="project-info">
-                                      <h4>Travel Booking Platform</h4>
-                                      <p>Comprehensive travel booking system with real-time availability</p>
+        .project-item:hover .project-info {
+          transform: translateY(0);
+        }
 
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+        .project-info h4 {
+          font-size: 20px;
+          margin-bottom: 8px;
+          font-weight: 600;
+        }
 
-                              <!-- Project 4 -->
-                              <div class="project-item">
-                                <div class="project-image">
-                                  <img src="https://i.pinimg.com/originals/e6/ef/75/e6ef75a920ce163bb0e02adeb1dee6c3.jpg" alt="Restaurant Website">
-                                  <div class="project-overlay">
-                                    <div class="project-info">
-                                      <h4>Restaurant Website</h4>
-                                      <p>Elegant website with online reservation system</p>
+        .project-info p {
+          font-size: 14px;
+          margin-bottom: 15px;
+          opacity: 0.9;
+        }
 
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+        .project-link {
+          display: inline-block;
+          color: white;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 14px;
+          position: relative;
+          padding-bottom: 2px;
+        }
 
-                              <!-- Project 5 -->
-                              <div class="project-item">
-                                <div class="project-image">
-                                  <img src="https://cdn.dribbble.com/users/2399102/screenshots/15674769/media/74c89cbcfca137d02cc6b52f3e46ea4c.png" alt="Health & Fitness App">
-                                  <div class="project-overlay">
-                                    <div class="project-info">
-                                      <h4>Health & Fitness App</h4>
-                                      <p>Mobile application with workout tracking and nutrition planning</p>
+        .project-link:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 1px;
+          background: white;
+          transform: scaleX(0);
+          transform-origin: right;
+          transition: transform 0.3s ease;
+        }
 
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </section>
+        .project-link:hover:after {
+          transform: scaleX(1);
+          transform-origin: left;
+        }
 
-                    <style>
-                      /* Projects Showcase Styles */
-                      .projects-showcase {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                        gap: 25px;
-                      }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .projects-showcase {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+          }
 
-                      .project-item {
-                        position: relative;
-                        border-radius: 12px;
-                        overflow: hidden;
-                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-                        transition: all 0.4s ease;
-                      }
+          .project-image {
+            height: 220px;
+          }
+        }
 
-                      .project-item:hover {
-                        transform: translateY(-8px);
-                        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-                      }
+        @media (max-width: 576px) {
+          .projects-showcase {
+            grid-template-columns: 1fr;
+          }
+        }
+      </style>
 
-                      .project-image {
-                        position: relative;
-                        height: 280px;
-                        overflow: hidden;
-                      }
+      <!-- Add more projects here in same structure -->
 
-                      .project-image img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        transition: transform 0.5s ease;
-                      }
+    </div>
+  </div>
+</div>
+</div>
+</section>
+<!--=================================
+      Case Studies -->
 
-                      .project-item:hover .project-image img {
-                        transform: scale(1.05);
-                      }
-
-                      .project-overlay {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-                        display: flex;
-                        align-items: flex-end;
-                        padding: 25px;
-                        opacity: 0;
-                        transition: opacity 0.4s ease;
-                      }
-
-                      .project-item:hover .project-overlay {
-                        opacity: 1;
-                      }
-
-                      .project-info {
-                        color: white;
-                        transform: translateY(20px);
-                        transition: transform 0.4s ease;
-                      }
-
-                      .project-item:hover .project-info {
-                        transform: translateY(0);
-                      }
-
-                      .project-info h4 {
-                        font-size: 20px;
-                        margin-bottom: 8px;
-                        font-weight: 600;
-                      }
-
-                      .project-info p {
-                        font-size: 14px;
-                        margin-bottom: 15px;
-                        opacity: 0.9;
-                      }
-
-                      .project-link {
-                        display: inline-block;
-                        color: white;
-                        text-decoration: none;
-                        font-weight: 600;
-                        font-size: 14px;
-                        position: relative;
-                        padding-bottom: 2px;
-                      }
-
-                      .project-link:after {
-                        content: '';
-                        position: absolute;
-                        bottom: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 1px;
-                        background: white;
-                        transform: scaleX(0);
-                        transform-origin: right;
-                        transition: transform 0.3s ease;
-                      }
-
-                      .project-link:hover:after {
-                        transform: scaleX(1);
-                        transform-origin: left;
-                      }
-
-                      /* Responsive adjustments */
-                      @media (max-width: 768px) {
-                        .projects-showcase {
-                          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                          gap: 20px;
-                        }
-
-                        .project-image {
-                          height: 220px;
-                        }
-                      }
-
-                      @media (max-width: 576px) {
-                        .projects-showcase {
-                          grid-template-columns: 1fr;
-                        }
-                      }
-                    </style>
-
-                    <!-- Add more projects here in same structure -->
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!--=================================
-                Case Studies -->
-
-          <!--=================================
-          Client Testimonials -->
-          <section class="space-ptb testimonial-section overflow-hidden ellipse-top bg-black z-index-2">
-            <div class="container">
-              <div class="row justify-content-center">
-                <div class="col-md-10">
-                  <div class="section-title text-center">
+<!--=================================
+Client Testimonials -->
+<section class="space-ptb testimonial-section overflow-hidden ellipse-top bg-black z-index-2">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="section-title text-center">
           <span class="sub-title justify-content-center">
             <img class="img-fluid" src="images/subtitle-icon.png" alt="">
             What Our Clients Say
           </span>
-                    <h2 class="title">Trusted by 500+ Clients Across the Globe</h2>
-                  </div>
-                </div>
+          <h2 class="title">Trusted by 500+ Clients Across the Globe</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-start">
+      <div class="col-md-11">
+        <div class="owl-carousel slider-overflow"
+             data-cursor-type="text"
+             data-custom-text="Drag"
+             data-nav-arrow="false"
+             data-items="2"
+             data-lg-items="1"
+             data-md-items="1"
+             data-sm-items="1"
+             data-space="50">
+
+          <!-- Testimonial 1 -->
+          <div class="item">
+            <div class="testimonial-wrapper testimonial-style-2">
+              <div class="testimonial-ratings">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
               </div>
-              <div class="row justify-content-start">
-                <div class="col-md-11">
-                  <div class="owl-carousel slider-overflow"
-                       data-cursor-type="text"
-                       data-custom-text="Drag"
-                       data-nav-arrow="false"
-                       data-items="2"
-                       data-lg-items="1"
-                       data-md-items="1"
-                       data-sm-items="1"
-                       data-space="50">
-
-                    <!-- Testimonial 1 -->
-                    <div class="item">
-                      <div class="testimonial-wrapper testimonial-style-2">
-                        <div class="testimonial-ratings">
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-regular fa-star"></i>
-                        </div>
-                        <div class="testimonial-quote">
-                          <img class="img-fluid" src="images/quote-icon-01.png" alt="">
-                        </div>
-                        <div class="testimonial-content">
-                          <p>OptimacoreTech built us a fast, responsive, and modern website that completely changed how customers interact with our brand online. Their team goes above and beyond.</p>
-                        </div>
-                        <div class="testimonial-author">
-                          <div class="author-info">
-                            <h6 class="author-name">Sarah Thompson</h6>
-                            <span class="author-position">Marketing Director, Nexora</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Testimonial 2 -->
-                    <div class="item">
-                      <div class="testimonial-wrapper testimonial-style-2">
-                        <div class="testimonial-ratings">
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-regular fa-star"></i>
-                        </div>
-                        <div class="testimonial-quote">
-                          <img class="img-fluid" src="images/quote-icon-01.png" alt="">
-                        </div>
-                        <div class="testimonial-content">
-                          <p>Their web development expertise and proactive approach helped us launch our SaaS platform ahead of schedule. Truly a reliable partner for long-term success.</p>
-                        </div>
-                        <div class="testimonial-author">
-                          <div class="author-info">
-                            <h6 class="author-name">David Lee</h6>
-                            <span class="author-position">Founder, Cloudlytics</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Testimonial 3 -->
-                    <div class="item">
-                      <div class="testimonial-wrapper testimonial-style-2">
-                        <div class="testimonial-ratings">
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                        </div>
-                        <div class="testimonial-quote">
-                          <img class="img-fluid" src="images/quote-icon-01.png" alt="">
-                        </div>
-                        <div class="testimonial-content">
-                          <p>From UI/UX design to backend development, OptimacoreTech delivered a seamless solution for our online store. Sales went up by 38% within the first month.</p>
-                        </div>
-                        <div class="testimonial-author">
-                          <div class="author-info">
-                            <h6 class="author-name">Isabella Martinez</h6>
-                            <span class="author-position">E-commerce Manager, UrbanNest</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Testimonial 4 -->
-                    <div class="item">
-                      <div class="testimonial-wrapper testimonial-style-2">
-                        <div class="testimonial-ratings">
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-solid fa-star"></i>
-                          <i class="fa-regular fa-star"></i>
-                        </div>
-                        <div class="testimonial-quote">
-                          <img class="img-fluid" src="images/quote-icon-01.png" alt="">
-                        </div>
-                        <div class="testimonial-content">
-                          <p>Excellent team to work with — responsive, innovative, and always focused on delivering results. We now have a stable, scalable web platform for our services.</p>
-                        </div>
-                        <div class="testimonial-author">
-                          <div class="author-info">
-                            <h6 class="author-name">Michael Carter</h6>
-                            <span class="author-position">COO, FinEdge Solutions</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
+              <div class="testimonial-quote">
+                <img class="img-fluid" src="images/quote-icon-01.png" alt="">
+              </div>
+              <div class="testimonial-content">
+                <p>OptimacoreTech built us a fast, responsive, and modern website that completely changed how customers interact with our brand online. Their team goes above and beyond.</p>
+              </div>
+              <div class="testimonial-author">
+                <div class="author-info">
+                  <h6 class="author-name">Sarah Thompson</h6>
+                  <span class="author-position">Marketing Director, Nexora</span>
                 </div>
               </div>
             </div>
-          </section>
-          <!--=================================
-                    Client Testimonials -->
+          </div>
 
-          <!--=================================
-           Our Team -->
-          <section class="space-pb bg-black z-index-2">
-            <div class="container">
-              <div class="row">
-                <div class="col-xxl-6 col-lg-8">
-                  <div class="section-title mb-lg-0">
+          <!-- Testimonial 2 -->
+          <div class="item">
+            <div class="testimonial-wrapper testimonial-style-2">
+              <div class="testimonial-ratings">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+              </div>
+              <div class="testimonial-quote">
+                <img class="img-fluid" src="images/quote-icon-01.png" alt="">
+              </div>
+              <div class="testimonial-content">
+                <p>Their web development expertise and proactive approach helped us launch our SaaS platform ahead of schedule. Truly a reliable partner for long-term success.</p>
+              </div>
+              <div class="testimonial-author">
+                <div class="author-info">
+                  <h6 class="author-name">David Lee</h6>
+                  <span class="author-position">Founder, Cloudlytics</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 3 -->
+          <div class="item">
+            <div class="testimonial-wrapper testimonial-style-2">
+              <div class="testimonial-ratings">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+              </div>
+              <div class="testimonial-quote">
+                <img class="img-fluid" src="images/quote-icon-01.png" alt="">
+              </div>
+              <div class="testimonial-content">
+                <p>From UI/UX design to backend development, OptimacoreTech delivered a seamless solution for our online store. Sales went up by 38% within the first month.</p>
+              </div>
+              <div class="testimonial-author">
+                <div class="author-info">
+                  <h6 class="author-name">Isabella Martinez</h6>
+                  <span class="author-position">E-commerce Manager, UrbanNest</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 4 -->
+          <div class="item">
+            <div class="testimonial-wrapper testimonial-style-2">
+              <div class="testimonial-ratings">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+              </div>
+              <div class="testimonial-quote">
+                <img class="img-fluid" src="images/quote-icon-01.png" alt="">
+              </div>
+              <div class="testimonial-content">
+                <p>Excellent team to work with — responsive, innovative, and always focused on delivering results. We now have a stable, scalable web platform for our services.</p>
+              </div>
+              <div class="testimonial-author">
+                <div class="author-info">
+                  <h6 class="author-name">Michael Carter</h6>
+                  <span class="author-position">COO, FinEdge Solutions</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--=================================
+          Client Testimonials -->
+
+<!--=================================
+ Our Team -->
+<section class="space-pb bg-black z-index-2">
+  <div class="container">
+    <div class="row">
+      <div class="col-xxl-6 col-lg-8">
+        <div class="section-title mb-lg-0">
           <span class="sub-title">
             <img class="img-fluid" src="images/subtitle-icon.png" alt="">
             Our Team
           </span>
-                    <h2 class="title mb-0">Meet the experts behind OptimacoreTech.</h2>
-                  </div>
-                </div>
-                <div class="col-xxl-6 col-lg-4 align-self-end">
-                  <p class="mb-0 ps-xxl-5">
-                    A dynamic team of innovators, creators, and problem-solvers dedicated to building cutting-edge web and digital solutions.
-                  </p>
-                </div>
-              </div>
+          <h2 class="title mb-0">Meet the experts behind OptimacoreTech.</h2>
+        </div>
+      </div>
+      <div class="col-xxl-6 col-lg-4 align-self-end">
+        <p class="mb-0 ps-xxl-5">
+          A dynamic team of innovators, creators, and problem-solvers dedicated to building cutting-edge web and digital solutions.
+        </p>
+      </div>
+    </div>
 
-              <div class="row mt-xl-5 pt-5">
-                <div class="col-md-12">
-                  <div class="team-boxs grid-wrapper grid-xl-4 grid-lg-3 grid-md-2 grid-sm-2 grid-xs-1">
+    <div class="row mt-xl-5 pt-5">
+      <div class="col-md-12">
+        <div class="team-boxs grid-wrapper grid-xl-4 grid-lg-3 grid-md-2 grid-sm-2 grid-xs-1">
 
-                    <!-- CEO - You -->
-                    <div class="team-item team-style-1">
-                      <div class="team-img">
-                        <img class="img-fluid" src="images/IMG_3781.jpg" alt="CEO - Madjidou Cherif">
-
-                      </div>
-                      <div class="team-info">
-                        <a href="team-detail.html" class="team-title">Cherif Abdoulaye</a>
-                        <span class="team-destination">CEO & Founder/Front End Developer</span>
-                        <div class="team-social">
-
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Team Member 2 -->
-                    <div class="team-item team-style-1">
-                      <div class="team-img">
-                        <img class="img-fluid" src="images/team/01.jpg" alt="">
-
-                      </div>
-                      <div class="team-info">
-                        <a href="team-detail.html" class="team-title">Liam Carter</a>
-                        <span class="team-destination">Chief Technology Officer</span>
-                        <div class="team-social">
-
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Team Member 3 -->
-                    <div class="team-item team-style-1">
-                      <div class="team-img">
-                        <img class="img-fluid" src="https://external-preview.redd.it/1p5i1tH6-fYBU6mtq9ytbvvTdCq0z68xT-SoSuegjOU.jpg?width=640&crop=smart&auto=webp&s=87b5a6e1622c3d2d128f557055b8ac1a3315c881" alt="">
-
-                      </div>
-                      <div class="team-info">
-                        <a href="team-detail.html" class="team-title">Isabella Reed</a>
-                        <span class="team-destination">Lead Developer</span>
-                        <div class="team-social">
-
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Team Member 4 -->
-                    <div class="team-item team-style-1">
-                      <div class="team-img">
-                        <img class="img-fluid" src="images/team/03.jpg" alt="">
-
-                      </div>
-                      <div class="team-info">
-                        <a href="team-detail.html" class="team-title">Sophia Williams</a>
-                        <span class="team-destination">UI/UX Designer</span>
-                        <div class="team-social">
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
+          <!-- CEO - You -->
+          <div class="team-item team-style-1">
+            <div class="team-img">
+              <img class="img-fluid" src="images/IMG_3781.jpg" alt="CEO - Madjidou Cherif">
 
             </div>
-          </section>
-          <!--=================================
-                    Our Team -->
+            <div class="team-info">
+              <a href="team-detail.html" class="team-title">Cherif Abdoulaye</a>
+              <span class="team-destination">CEO & Founder/Front End Developer</span>
+              <div class="team-social">
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Member 2 -->
+          <div class="team-item team-style-1">
+            <div class="team-img">
+              <img class="img-fluid" src="images/team/01.jpg" alt="">
+
+            </div>
+            <div class="team-info">
+              <a href="team-detail.html" class="team-title">Liam Carter</a>
+              <span class="team-destination">Chief Technology Officer</span>
+              <div class="team-social">
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Member 3 -->
+          <div class="team-item team-style-1">
+            <div class="team-img">
+              <img class="img-fluid" src="https://external-preview.redd.it/1p5i1tH6-fYBU6mtq9ytbvvTdCq0z68xT-SoSuegjOU.jpg?width=640&crop=smart&auto=webp&s=87b5a6e1622c3d2d128f557055b8ac1a3315c881" alt="">
+
+            </div>
+            <div class="team-info">
+              <a href="team-detail.html" class="team-title">Isabella Reed</a>
+              <span class="team-destination">Lead Developer</span>
+              <div class="team-social">
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Team Member 4 -->
+          <div class="team-item team-style-1">
+            <div class="team-img">
+              <img class="img-fluid" src="images/team/03.jpg" alt="">
+
+            </div>
+            <div class="team-info">
+              <a href="team-detail.html" class="team-title">Sophia Williams</a>
+              <span class="team-destination">UI/UX Designer</span>
+              <div class="team-social">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!--=================================
+          Our Team -->
 
 
-          <!--=================================
-           FAQ -->
-          <section class="space-pt ellipse-top">
-            <div class="space-pb ellipse-bottom">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-12 text-center">
-                    <div class="section-title">
+<!--=================================
+ FAQ -->
+<section class="space-pt ellipse-top">
+  <div class="space-pb ellipse-bottom">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <div class="section-title">
             <span class="sub-title justify-content-center">
               <img class="img-fluid" src="images/subtitle-icon.png" alt=""> FAQ
             </span>
-                      <h2 class="title mb-0">Frequently Asked Questions</h2>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <!-- Left Column -->
-                  <div class="col-md-6">
-                    <div class="accordion" id="pgsaccordion">
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingOne">
-                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            01. How long does it take to complete a project?
-                          </button>
-                        </h5>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#pgsaccordion">
-                          <div class="accordion-body">
-                            Project timelines depend on complexity and requirements. On average, web development projects take 4–8 weeks from planning to launch.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingTwo">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            02. Do you offer website maintenance after launch?
-                          </button>
-                        </h5>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#pgsaccordion">
-                          <div class="accordion-body">
-                            Yes! We provide ongoing maintenance packages including updates, backups, and performance optimization.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingThree">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            03. Can you redesign my existing website?
-                          </button>
-                        </h5>
-                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#pgsaccordion">
-                          <div class="accordion-body">
-                            Absolutely! We specialize in modernizing outdated websites with a fresh, user-friendly design while keeping your existing content intact.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingFour">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                            04. Do you also handle hosting and domain setup?
-                          </button>
-                        </h5>
-                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#pgsaccordion">
-                          <div class="accordion-body">
-                            Yes, we assist with domain registration, hosting setup, and email configuration to ensure a seamless start.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Right Column -->
-                  <div class="col-md-6 mt-4 mt-md-0">
-                    <div class="accordion" id="pgsaccordion1">
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingFive">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                            05. Do you create multilingual websites?
-                          </button>
-                        </h5>
-                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#pgsaccordion1">
-                          <div class="accordion-body">
-                            Yes! We can build multilingual websites with seamless language switching for your global audience.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingSix">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                            06. What technologies do you use?
-                          </button>
-                        </h5>
-                        <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#pgsaccordion1">
-                          <div class="accordion-body">
-                            We use modern technologies like HTML5, CSS3, JavaScript, React, and backend frameworks such as Laravel and Spring Boot.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingSeven">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
-                            07. Can you integrate payment gateways?
-                          </button>
-                        </h5>
-                        <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#pgsaccordion1">
-                          <div class="accordion-body">
-                            Yes, we integrate secure payment gateways like Stripe and PayPal for seamless online transactions.
-                          </div>
-                        </div>
-                      </div>
-                      <div class="accordion-item">
-                        <h5 class="accordion-header" id="headingEight">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-                            08. How do I get started?
-                          </button>
-                        </h5>
-                        <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#pgsaccordion1">
-                          <div class="accordion-body">
-                            Simply contact us via our website or email. We'll schedule a consultation to discuss your needs and create a project proposal.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!--=================================
-                    FAQ -->
-
+            <h2 class="title mb-0">Frequently Asked Questions</h2>
+          </div>
         </div>
       </div>
 
-      <!--=================================
-      Site Footer -->
-      <footer class="site-footer footer-dark">
-        <div class="footer-main">
-          <div class="container">
-            <div class="row">
-              <div class="col-xl-3 col-md-5">
-                <div class="widget widget-address-info">
-                  <h5 class="widget-title">Where To Find Us</h5>
-                  <ul class="address-info-list">
-                    <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-contacts.svg" alt=""></i><span class="info"><span>Antwerp 2060</span>Belgium</span></li>
-                    <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-headphone.svg" alt=""></i><span class="info"><span>+32 465 856 075</span>Mon-fri 8:30am 6:30pm</span></li>
-                    <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-email.svg" alt=""></i><span class="info"><span>optimacoretech@outlook.com</span>24x7 online support</span></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-xl-5 col-md-7">
-                <div class="widget">
-                  <h5 class="widget-title">Newsletter</h5>
-                  <div class="widget widget-newsletter mb-4 pb-2">
-                    <form class="newsletter-form">
-                      <input type="text" class="form-control" placeholder="Enter Your Email">
-                      <button type="submit" class="subscribe-btn"><i class="fa-solid fa-paper-plane"></i></button>
-                    </form>
-                  </div>
-                  <div class="widget widget-menu">
-                    <h6 class="widget-title">Quick Links</h6>
-                    <ul class="list-unstyled list-col-3 mb-0">
-                      <li><a href="index.html">Home</a></li>
-
-                      <li><a href="contact-us.html">Contact</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-md-12 ms-auto">
-                <div class="widget widget-info">
-                  <h5 class="widget-title">Call Center</h5>
-                  <a class="number" href="tel:+32 465 856 075">+32 465 856 075</a>
-                  <h6 class="title">and get a free estimate</h6>
-                </div>
-                <div class="widget-socail">
-
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+          <div class="accordion" id="pgsaccordion">
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  01. How long does it take to complete a project?
+                </button>
+              </h5>
+              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#pgsaccordion">
+                <div class="accordion-body">
+                  Project timelines depend on complexity and requirements. On average, web development projects take 4–8 weeks from planning to launch.
                 </div>
               </div>
             </div>
-
-          </div>
-        </div>
-        <div class="footer-copyright">
-          <div class="container">
-            <div class="row align-items-center">
-              <div class="col-lg-6"><p> <a class="navbar-brand" href="index.html">
-                <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
-              </a></a></p></div>
-              <div class="col-lg-6 text-lg-end"><p>Develop and design by <a href="#">Cherif Abdoulaye</a></p></div>
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  02. Do you offer website maintenance after launch?
+                </button>
+              </h5>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#pgsaccordion">
+                <div class="accordion-body">
+                  Yes! We provide ongoing maintenance packages including updates, backups, and performance optimization.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  03. Can you redesign my existing website?
+                </button>
+              </h5>
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#pgsaccordion">
+                <div class="accordion-body">
+                  Absolutely! We specialize in modernizing outdated websites with a fresh, user-friendly design while keeping your existing content intact.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                  04. Do you also handle hosting and domain setup?
+                </button>
+              </h5>
+              <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#pgsaccordion">
+                <div class="accordion-body">
+                  Yes, we assist with domain registration, hosting setup, and email configuration to ensure a seamless start.
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </footer>
 
-      <!--=================================
-      Back To Top -->
-      <div class="back-to-top">
-        <svg class="progress-circle svg-content" width="100%" height="100%" viewbox="-1 -1 102 102">
-          <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"></path>
-        </svg>
+        <!-- Right Column -->
+        <div class="col-md-6 mt-4 mt-md-0">
+          <div class="accordion" id="pgsaccordion1">
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingFive">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                  05. Do you create multilingual websites?
+                </button>
+              </h5>
+              <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#pgsaccordion1">
+                <div class="accordion-body">
+                  Yes! We can build multilingual websites with seamless language switching for your global audience.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingSix">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                  06. What technologies do you use?
+                </button>
+              </h5>
+              <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#pgsaccordion1">
+                <div class="accordion-body">
+                  We use modern technologies like HTML5, CSS3, JavaScript, React, and backend frameworks such as Laravel and Spring Boot.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingSeven">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                  07. Can you integrate payment gateways?
+                </button>
+              </h5>
+              <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#pgsaccordion1">
+                <div class="accordion-body">
+                  Yes, we integrate secure payment gateways like Stripe and PayPal for seamless online transactions.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h5 class="accordion-header" id="headingEight">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                  08. How do I get started?
+                </button>
+              </h5>
+              <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#pgsaccordion1">
+                <div class="accordion-body">
+                  Simply contact us via our website or email. We'll schedule a consultation to discuss your needs and create a project proposal.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--=================================
+          FAQ -->
+
+</div>
+</div>
+
+<!--=================================
+Site Footer -->
+<footer class="site-footer footer-dark">
+  <div class="footer-main">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-3 col-md-5">
+          <div class="widget widget-address-info">
+            <h5 class="widget-title">Where To Find Us</h5>
+            <ul class="address-info-list">
+              <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-contacts.svg" alt=""></i><span class="info"><span>Antwerp 2060</span>Belgium</span></li>
+              <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-headphone.svg" alt=""></i><span class="info"><span>+32 465 856 075</span>Mon-fri 8:30am 6:30pm</span></li>
+              <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-email.svg" alt=""></i><span class="info"><span>optimacoretech@outlook.com</span>24x7 online support</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-xl-5 col-md-7">
+          <div class="widget">
+            <h5 class="widget-title">Newsletter</h5>
+            <div class="widget widget-newsletter mb-4 pb-2">
+              <form class="newsletter-form">
+                <input type="text" class="form-control" placeholder="Enter Your Email">
+                <button type="submit" class="subscribe-btn"><i class="fa-solid fa-paper-plane"></i></button>
+              </form>
+            </div>
+            <div class="widget widget-menu">
+              <h6 class="widget-title">Quick Links</h6>
+              <ul class="list-unstyled list-col-3 mb-0">
+                <li><a href="index.html">Home</a></li>
+
+                <li><a href="contact-us.html">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-12 ms-auto">
+          <div class="widget widget-info">
+            <h5 class="widget-title">Call Center</h5>
+            <a class="number" href="tel:+32 465 856 075">+32 465 856 075</a>
+            <h6 class="title">and get a free estimate</h6>
+          </div>
+          <div class="widget-socail">
+
+          </div>
+        </div>
       </div>
 
     </div>
-    <!--=================================
-    Javascript -->
-    <!-- JS Global Compulsory (Do not remove)-->
-    <script src="js/jquery-3.7.1.min.js"></script>
-    <script src="js/jquery.appear.js"></script>
-    <script src="js/popper/popper.min.js"></script>
-    <script src="js/bootstrap/bootstrap.min.js"></script>
-    <!-- Page JS Implementing Plugins (Remove the plugin script here if site does not use that feature)-->
-    <script src="js/owl-carousel/owl.carousel.min.js"></script>
-    <script src="js/swiper/swiper.min.js"></script>
-    <script src="js/swiperanimation/SwiperAnimation.min.js"></script>
-    <script src="js/shuffle/shuffle.min.js"></script>
-    <script src="js/magnific-popup/jquery.magnific-popup.js"></script>
-    <script src="js/counter/jquery.countTo.js"></script>
-    <script src="js/gsap.min.js"></script>
-    <script src="js/attractHover.js"></script>
-    <script src="js/lenis.min.js"></script>
-    <script src="js/custom.js"></script> <!-- Template Scripts (Do not remove)-->
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6"><p> <a class="navbar-brand" href="index.html">
+          <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
+        </a></a></p></div>
+        <div class="col-lg-6 text-lg-end"><p>Develop and design by <a href="#">Cherif Abdoulaye</a></p></div>
+      </div>
+    </div>
+  </div>
+</footer>
 
-    <!--=================================
-       Javascript -->
-    <!-- JS Global Compulsory (Do not remove)-->
-    <script src="js/jquery-3.7.1.min.js"></script>
-    <script src="js/jquery.appear.js"></script>
-    <script src="js/popper/popper.min.js"></script>
-    <script src="js/bootstrap/bootstrap.min.js"></script>
-    <!-- Page JS Implementing Plugins (Remove the plugin script here if site does not use that feature)-->
-    <script src="js/owl-carousel/owl.carousel.min.js"></script>
-    <script src="js/swiper/swiper.min.js"></script>
-    <script src="js/swiperanimation/SwiperAnimation.min.js"></script>
-    <script src="js/shuffle/shuffle.min.js"></script>
-    <script src="js/magnific-popup/jquery.magnific-popup.js"></script>
-    <script src="js/counter/jquery.countTo.js"></script>
-    <script src="js/gsap.min.js"></script>
-    <script src="js/attractHover.js"></script>
-    <script src="js/lenis.min.js"></script>
-    <script src="js/custom.js"></script> <!-- Template Scripts (Do not remove)-->
+<!--=================================
+Back To Top -->
+<div class="back-to-top">
+  <svg class="progress-circle svg-content" width="100%" height="100%" viewbox="-1 -1 102 102">
+    <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"></path>
+  </svg>
+</div>
 
-    <!-- Chatbot Script -->
-    <script>
-      $(document).ready(function() {
-        // Chatbot variables
-        let chatState = {
-          step: 'name',
-          data: {
-            name: '',
-            company: '',
-            businessType: '',
-            need: '',
-            websiteType: '',
-            email: ''
-          }
-        };
+</div>
+<!--=================================
+Javascript -->
+<!-- JS Global Compulsory (Do not remove)-->
+<script src="js/jquery-3.7.1.min.js"></script>
+<script src="js/jquery.appear.js"></script>
+<script src="js/popper/popper.min.js"></script>
+<script src="js/bootstrap/bootstrap.min.js"></script>
+<!-- Page JS Implementing Plugins (Remove the plugin script here if site does not use that feature)-->
+<script src="js/owl-carousel/owl.carousel.min.js"></script>
+<script src="js/swiper/swiper.min.js"></script>
+<script src="js/swiperanimation/SwiperAnimation.min.js"></script>
+<script src="js/shuffle/shuffle.min.js"></script>
+<script src="js/magnific-popup/jquery.magnific-popup.js"></script>
+<script src="js/counter/jquery.countTo.js"></script>
+<script src="js/gsap.min.js"></script>
+<script src="js/attractHover.js"></script>
+<script src="js/lenis.min.js"></script>
+<script src="js/custom.js"></script> <!-- Template Scripts (Do not remove)-->
 
-        // Voice recognition variables
-        let recognition = null;
-        let isListening = false;
+<!--=================================
+   Javascript -->
+<!-- JS Global Compulsory (Do not remove)-->
+<script src="js/jquery-3.7.1.min.js"></script>
+<script src="js/jquery.appear.js"></script>
+<script src="js/popper/popper.min.js"></script>
+<script src="js/bootstrap/bootstrap.min.js"></script>
+<!-- Page JS Implementing Plugins (Remove the plugin script here if site does not use that feature)-->
+<script src="js/owl-carousel/owl.carousel.min.js"></script>
+<script src="js/swiper/swiper.min.js"></script>
+<script src="js/swiperanimation/SwiperAnimation.min.js"></script>
+<script src="js/shuffle/shuffle.min.js"></script>
+<script src="js/magnific-popup/jquery.magnific-popup.js"></script>
+<script src="js/counter/jquery.countTo.js"></script>
+<script src="js/gsap.min.js"></script>
+<script src="js/attractHover.js"></script>
+<script src="js/lenis.min.js"></script>
+<script src="js/custom.js"></script> <!-- Template Scripts (Do not remove)-->
 
-        // Check if browser supports speech recognition
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-          recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-          recognition.continuous = false;
-          recognition.interimResults = true;
-          recognition.lang = 'en-US';
+<!-- Chatbot Script -->
+<script>
+  $(document).ready(function() {
+    // Chatbot variables
+    let chatState = {
+      step: 'name',
+      data: {
+        name: '',
+        company: '',
+        businessType: '',
+        need: '',
+        websiteType: '',
+        email: ''
+      }
+    };
 
-          recognition.onstart = function() {
-            isListening = true;
-            $('#voice-input').addClass('listening');
-            $('#voice-feedback').fadeIn();
-          };
+    // Voice recognition variables
+    let recognition = null;
+    let isListening = false;
 
-          recognition.onresult = function(event) {
-            let interimTranscript = '';
-            let finalTranscript = '';
+    // Check if browser supports speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
 
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-              if (event.results[i].isFinal) {
-                finalTranscript += event.results[i][0].transcript;
-              } else {
-                interimTranscript += event.results[i][0].transcript;
-              }
-            }
+      recognition.onstart = function() {
+        isListening = true;
+        $('#voice-input').addClass('listening');
+        $('#voice-feedback').fadeIn();
+      };
 
-            $('#chatbot-input').val(finalTranscript || interimTranscript);
+      recognition.onresult = function(event) {
+        let interimTranscript = '';
+        let finalTranscript = '';
 
-            if (finalTranscript) {
-              setTimeout(() => {
-                sendMessage();
-              }, 500);
-            }
-          };
-
-          recognition.onerror = function(event) {
-            console.error('Speech recognition error', event.error);
-            stopVoiceRecognition();
-          };
-
-          recognition.onend = function() {
-            stopVoiceRecognition();
-          };
-        } else {
-          // Browser doesn't support speech recognition
-          $('#voice-input').hide();
-        }
-
-        function startVoiceRecognition() {
-          if (recognition) {
-            try {
-              recognition.start();
-            } catch (error) {
-              console.error('Speech recognition start failed', error);
-            }
-          }
-        }
-
-        function stopVoiceRecognition() {
-          if (recognition) {
-            try {
-              recognition.stop();
-            } catch (error) {
-              console.error('Speech recognition stop failed', error);
-            }
-            isListening = false;
-            $('#voice-input').removeClass('listening');
-            $('#voice-feedback').fadeOut();
-          }
-        }
-
-        // DOM elements
-        const $chatbotButton = $('.chatbot-button');
-        const $chatbotWindow = $('.chatbot-window');
-        const $chatbotClose = $('.chatbot-close');
-        const $chatbotMessages = $('#chatbot-messages');
-        const $chatbotInput = $('#chatbot-input');
-        const $chatbotSend = $('#chatbot-send');
-        const $voiceInput = $('#voice-input');
-
-        // Toggle chat window
-        $chatbotButton.on('click', function() {
-          $chatbotWindow.toggleClass('active');
-          $chatbotButton.toggleClass('active');
-          if ($chatbotWindow.hasClass('active')) {
-            $chatbotInput.focus();
-          }
-        });
-
-        $chatbotClose.on('click', function() {
-          $chatbotWindow.removeClass('active');
-          $chatbotButton.removeClass('active');
-          stopVoiceRecognition();
-        });
-
-        // Voice input handler
-        $voiceInput.on('click', function() {
-          if (isListening) {
-            stopVoiceRecognition();
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
           } else {
-            startVoiceRecognition();
+            interimTranscript += event.results[i][0].transcript;
           }
-        });
-
-        // Send message function
-        function sendMessage() {
-          const message = $chatbotInput.val().trim();
-          if (message === '') return;
-
-          // Add user message to chat
-          addMessage(message, 'user');
-          $chatbotInput.val('');
-
-          // Process the message based on current step
-          processUserResponse(message);
         }
 
-        // Send message on button click
-        $chatbotSend.on('click', sendMessage);
+        $('#chatbot-input').val(finalTranscript || interimTranscript);
 
-        // Send message on Enter key
-        $chatbotInput.on('keypress', function(e) {
-          if (e.which === 13) {
+        if (finalTranscript) {
+          setTimeout(() => {
             sendMessage();
+          }, 500);
+        }
+      };
+
+      recognition.onerror = function(event) {
+        console.error('Speech recognition error', event.error);
+        stopVoiceRecognition();
+      };
+
+      recognition.onend = function() {
+        stopVoiceRecognition();
+      };
+    } else {
+      // Browser doesn't support speech recognition
+      $('#voice-input').hide();
+    }
+
+    function startVoiceRecognition() {
+      if (recognition) {
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error('Speech recognition start failed', error);
+        }
+      }
+    }
+
+    function stopVoiceRecognition() {
+      if (recognition) {
+        try {
+          recognition.stop();
+        } catch (error) {
+          console.error('Speech recognition stop failed', error);
+        }
+        isListening = false;
+        $('#voice-input').removeClass('listening');
+        $('#voice-feedback').fadeOut();
+      }
+    }
+
+    // DOM elements
+    const $chatbotButton = $('.chatbot-button');
+    const $chatbotWindow = $('.chatbot-window');
+    const $chatbotClose = $('.chatbot-close');
+    const $chatbotMessages = $('#chatbot-messages');
+    const $chatbotInput = $('#chatbot-input');
+    const $chatbotSend = $('#chatbot-send');
+    const $voiceInput = $('#voice-input');
+
+    // Toggle chat window
+    $chatbotButton.on('click', function() {
+      $chatbotWindow.toggleClass('active');
+      $chatbotButton.toggleClass('active');
+      if ($chatbotWindow.hasClass('active')) {
+        $chatbotInput.focus();
+      }
+    });
+
+    $chatbotClose.on('click', function() {
+      $chatbotWindow.removeClass('active');
+      $chatbotButton.removeClass('active');
+      stopVoiceRecognition();
+    });
+
+    // Voice input handler
+    $voiceInput.on('click', function() {
+      if (isListening) {
+        stopVoiceRecognition();
+      } else {
+        startVoiceRecognition();
+      }
+    });
+
+    // Send message function
+    function sendMessage() {
+      const message = $chatbotInput.val().trim();
+      if (message === '') return;
+
+      // Add user message to chat
+      addMessage(message, 'user');
+      $chatbotInput.val('');
+
+      // Process the message based on current step
+      processUserResponse(message);
+    }
+
+    // Send message on button click
+    $chatbotSend.on('click', sendMessage);
+
+    // Send message on Enter key
+    $chatbotInput.on('keypress', function(e) {
+      if (e.which === 13) {
+        sendMessage();
+      }
+    });
+
+    // Add message to chat
+    function addMessage(text, type) {
+      const now = new Date();
+      const time = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+
+      const messageElement = $('<div>').addClass('message').addClass(type + '-message').text(text);
+      messageElement.append($('<div>').addClass('message-time').text(time));
+
+      $chatbotMessages.append(messageElement);
+      $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
+    }
+
+    // Add typing indicator
+    function showTypingIndicator() {
+      const typingElement = $('<div>').addClass('typing-indicator');
+      typingElement.append($('<div>').addClass('typing-dot'));
+      typingElement.append($('<div>').addClass('typing-dot'));
+      typingElement.append($('<div>').addClass('typing-dot'));
+      $chatbotMessages.append(typingElement);
+      $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
+      return typingElement;
+    }
+
+    // Remove typing indicator
+    function removeTypingIndicator(typingElement) {
+      typingElement.remove();
+    }
+
+    // Process user response based on current step
+    function processUserResponse(response) {
+      switch(chatState.step) {
+        case 'name':
+          chatState.data.name = response;
+          chatState.step = 'company';
+          setTimeout(function() {
+            const typingElement = showTypingIndicator();
+            setTimeout(function() {
+              removeTypingIndicator(typingElement);
+              addMessage(`Nice to meet you, ${response}! What's your company name?`, 'bot');
+            }, 1000);
+          }, 500);
+          break;
+
+        case 'company':
+          chatState.data.company = response;
+          chatState.step = 'businessType';
+          setTimeout(function() {
+            const typingElement = showTypingIndicator();
+            setTimeout(function() {
+              removeTypingIndicator(typingElement);
+              addMessage('Great! What kind of business does your company do?', 'bot');
+            }, 1000);
+          }, 500);
+          break;
+
+        case 'businessType':
+          chatState.data.businessType = response;
+          chatState.step = 'need';
+          setTimeout(function() {
+            const typingElement = showTypingIndicator();
+            setTimeout(function() {
+              removeTypingIndicator(typingElement);
+              addMessage('Thanks! How can we help you today?', 'bot');
+              // Add quick options
+              const optionsContainer = $('<div>').addClass('options-container');
+              optionsContainer.append($('<button>').addClass('option-button').text('Website Development'));
+              optionsContainer.append($('<button>').addClass('option-button').text('Mobile App'));
+              optionsContainer.append($('<button>').addClass('option-button').text('IT Consulting'));
+              optionsContainer.append($('<button>').addClass('option-button').text('Other'));
+
+              const messageElement = $('<div>').addClass('message bot-message');
+              messageElement.append('You can choose one of these options or describe your needs:');
+              messageElement.append(optionsContainer);
+              $chatbotMessages.append(messageElement);
+              $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
+
+              // Add event listeners to option buttons
+              $('.option-button').on('click', function() {
+                $chatbotInput.val($(this).text());
+                sendMessage();
+              });
+            }, 1000);
+          }, 500);
+          break;
+
+        case 'need':
+          chatState.data.need = response;
+          if (response.toLowerCase().includes('website')) {
+            chatState.step = 'websiteType';
+            setTimeout(function() {
+              const typingElement = showTypingIndicator();
+              setTimeout(function() {
+                removeTypingIndicator(typingElement);
+                addMessage('What type of website are you looking for?', 'bot');
+                // Add website type options
+                const optionsContainer = $('<div>').addClass('options-container');
+                optionsContainer.append($('<button>').addClass('option-button').text('Static Website'));
+                optionsContainer.append($('<button>').addClass('option-button').text('Landing Page'));
+                optionsContainer.append($('<button>').addClass('option-button').text('E-commerce'));
+                optionsContainer.append($('<button>').addClass('option-button').text('Web Application'));
+
+                const messageElement = $('<div>').addClass('message bot-message');
+                messageElement.append(optionsContainer);
+                $chatbotMessages.append(messageElement);
+                $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
+
+                // Add event listeners to option buttons
+                $('.option-button').on('click', function() {
+                  $chatbotInput.val($(this).text());
+                  sendMessage();
+                });
+              }, 1000);
+            }, 500);
+          } else {
+            chatState.step = 'email';
+            setTimeout(function() {
+              const typingElement = showTypingIndicator();
+              setTimeout(function() {
+                removeTypingIndicator(typingElement);
+                addMessage('Thanks for sharing! Could you please provide your email address so our team can contact you?', 'bot');
+              }, 1000);
+            }, 500);
           }
-        });
+          break;
 
-        // Add message to chat
-        function addMessage(text, type) {
-          const now = new Date();
-          const time = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+        case 'websiteType':
+          chatState.data.websiteType = response;
+          chatState.step = 'email';
+          setTimeout(function() {
+            const typingElement = showTypingIndicator();
+            setTimeout(function() {
+              removeTypingIndicator(typingElement);
+              addMessage('Perfect! Lastly, could you please provide your email address so our team can contact you with a tailored proposal?', 'bot');
+            }, 1000);
+          }, 500);
+          break;
 
-          const messageElement = $('<div>').addClass('message').addClass(type + '-message').text(text);
-          messageElement.append($('<div>').addClass('message-time').text(time));
+        case 'email':
+          // Simple email validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (emailRegex.test(response)) {
+            chatState.data.email = response;
 
-          $chatbotMessages.append(messageElement);
-          $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
-        }
+            // Submit the data to Formspree
+            submitToFormspree();
 
-        // Add typing indicator
-        function showTypingIndicator() {
-          const typingElement = $('<div>').addClass('typing-indicator');
-          typingElement.append($('<div>').addClass('typing-dot'));
-          typingElement.append($('<div>').addClass('typing-dot'));
-          typingElement.append($('<div>').addClass('typing-dot'));
-          $chatbotMessages.append(typingElement);
-          $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
-          return typingElement;
-        }
-
-        // Remove typing indicator
-        function removeTypingIndicator(typingElement) {
-          typingElement.remove();
-        }
-
-        // Process user response based on current step
-        function processUserResponse(response) {
-          switch(chatState.step) {
-            case 'name':
-              chatState.data.name = response;
-              chatState.step = 'company';
+            setTimeout(function() {
+              const typingElement = showTypingIndicator();
               setTimeout(function() {
-                const typingElement = showTypingIndicator();
-                setTimeout(function() {
-                  removeTypingIndicator(typingElement);
-                  addMessage(`Nice to meet you, ${response}! What's your company name?`, 'bot');
-                }, 1000);
-              }, 500);
-              break;
-
-            case 'company':
-              chatState.data.company = response;
-              chatState.step = 'businessType';
+                removeTypingIndicator(typingElement);
+                addMessage('Thank you! Our team will contact you shortly. Is there anything else I can help you with?', 'bot');
+                chatState.step = 'completed';
+              }, 1000);
+            }, 500);
+          } else {
+            setTimeout(function() {
+              const typingElement = showTypingIndicator();
               setTimeout(function() {
-                const typingElement = showTypingIndicator();
-                setTimeout(function() {
-                  removeTypingIndicator(typingElement);
-                  addMessage('Great! What kind of business does your company do?', 'bot');
-                }, 1000);
-              }, 500);
-              break;
-
-            case 'businessType':
-              chatState.data.businessType = response;
-              chatState.step = 'need';
-              setTimeout(function() {
-                const typingElement = showTypingIndicator();
-                setTimeout(function() {
-                  removeTypingIndicator(typingElement);
-                  addMessage('Thanks! How can we help you today?', 'bot');
-                  // Add quick options
-                  const optionsContainer = $('<div>').addClass('options-container');
-                  optionsContainer.append($('<button>').addClass('option-button').text('Website Development'));
-                  optionsContainer.append($('<button>').addClass('option-button').text('Mobile App'));
-                  optionsContainer.append($('<button>').addClass('option-button').text('IT Consulting'));
-                  optionsContainer.append($('<button>').addClass('option-button').text('Other'));
-
-                  const messageElement = $('<div>').addClass('message bot-message');
-                  messageElement.append('You can choose one of these options or describe your needs:');
-                  messageElement.append(optionsContainer);
-                  $chatbotMessages.append(messageElement);
-                  $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
-
-                  // Add event listeners to option buttons
-                  $('.option-button').on('click', function() {
-                    $chatbotInput.val($(this).text());
-                    sendMessage();
-                  });
-                }, 1000);
-              }, 500);
-              break;
-
-            case 'need':
-              chatState.data.need = response;
-              if (response.toLowerCase().includes('website')) {
-                chatState.step = 'websiteType';
-                setTimeout(function() {
-                  const typingElement = showTypingIndicator();
-                  setTimeout(function() {
-                    removeTypingIndicator(typingElement);
-                    addMessage('What type of website are you looking for?', 'bot');
-                    // Add website type options
-                    const optionsContainer = $('<div>').addClass('options-container');
-                    optionsContainer.append($('<button>').addClass('option-button').text('Static Website'));
-                    optionsContainer.append($('<button>').addClass('option-button').text('Landing Page'));
-                    optionsContainer.append($('<button>').addClass('option-button').text('E-commerce'));
-                    optionsContainer.append($('<button>').addClass('option-button').text('Web Application'));
-
-                    const messageElement = $('<div>').addClass('message bot-message');
-                    messageElement.append(optionsContainer);
-                    $chatbotMessages.append(messageElement);
-                    $chatbotMessages.scrollTop($chatbotMessages[0].scrollHeight);
-
-                    // Add event listeners to option buttons
-                    $('.option-button').on('click', function() {
-                      $chatbotInput.val($(this).text());
-                      sendMessage();
-                    });
-                  }, 1000);
-                }, 500);
-              } else {
-                chatState.step = 'email';
-                setTimeout(function() {
-                  const typingElement = showTypingIndicator();
-                  setTimeout(function() {
-                    removeTypingIndicator(typingElement);
-                    addMessage('Thanks for sharing! Could you please provide your email address so our team can contact you?', 'bot');
-                  }, 1000);
-                }, 500);
-              }
-              break;
-
-            case 'websiteType':
-              chatState.data.websiteType = response;
-              chatState.step = 'email';
-              setTimeout(function() {
-                const typingElement = showTypingIndicator();
-                setTimeout(function() {
-                  removeTypingIndicator(typingElement);
-                  addMessage('Perfect! Lastly, could you please provide your email address so our team can contact you with a tailored proposal?', 'bot');
-                }, 1000);
-              }, 500);
-              break;
-
-            case 'email':
-              // Simple email validation
-              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-              if (emailRegex.test(response)) {
-                chatState.data.email = response;
-
-                // Submit the data to Formspree
-                submitToFormspree();
-
-                setTimeout(function() {
-                  const typingElement = showTypingIndicator();
-                  setTimeout(function() {
-                    removeTypingIndicator(typingElement);
-                    addMessage('Thank you! Our team will contact you shortly. Is there anything else I can help you with?', 'bot');
-                    chatState.step = 'completed';
-                  }, 1000);
-                }, 500);
-              } else {
-                setTimeout(function() {
-                  const typingElement = showTypingIndicator();
-                  setTimeout(function() {
-                    removeTypingIndicator(typingElement);
-                    addMessage('That doesn\'t look like a valid email address. Please provide a valid email.', 'bot');
-                  }, 1000);
-                }, 500);
-              }
-              break;
-
-            case 'completed':
-              // Handle any follow-up questions
-              setTimeout(function() {
-                const typingElement = showTypingIndicator();
-                setTimeout(function() {
-                  removeTypingIndicator(typingElement);
-                  addMessage('I\'m here if you need anything else!', 'bot');
-                }, 1000);
-              }, 500);
-              break;
+                removeTypingIndicator(typingElement);
+                addMessage('That doesn\'t look like a valid email address. Please provide a valid email.', 'bot');
+              }, 1000);
+            }, 500);
           }
+          break;
+
+        case 'completed':
+          // Handle any follow-up questions
+          setTimeout(function() {
+            const typingElement = showTypingIndicator();
+            setTimeout(function() {
+              removeTypingIndicator(typingElement);
+              addMessage('I\'m here if you need anything else!', 'bot');
+            }, 1000);
+          }, 500);
+          break;
+      }
+    }
+
+    // Submit data to Formspree
+    function submitToFormspree() {
+      // Replace with your actual Formspree endpoint
+      const formspreeEndpoint = "https://formspree.io/f/xovnyjve";
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('name', chatState.data.name);
+      formData.append('company', chatState.data.company);
+      formData.append('businessType', chatState.data.businessType);
+      formData.append('need', chatState.data.need);
+      formData.append('websiteType', chatState.data.websiteType);
+      formData.append('email', chatState.data.email);
+      formData.append('_subject', 'New lead from Safira chatbot');
+
+      // Submit using fetch
+      fetch(formspreeEndpoint, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
         }
+      })
+              .then(response => {
+                if (response.ok) {
+                  console.log('Form submitted successfully');
+                } else {
+                  console.error('Form submission error');
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+    }
 
-        // Submit data to Formspree
-        function submitToFormspree() {
-          // Replace with your actual Formspree endpoint
-          const formspreeEndpoint = "https://formspree.io/f/xovnyjve";
-
-          // Create form data
-          const formData = new FormData();
-          formData.append('name', chatState.data.name);
-          formData.append('company', chatState.data.company);
-          formData.append('businessType', chatState.data.businessType);
-          formData.append('need', chatState.data.need);
-          formData.append('websiteType', chatState.data.websiteType);
-          formData.append('email', chatState.data.email);
-          formData.append('_subject', 'New lead from Safira chatbot');
-
-          // Submit using fetch
-          fetch(formspreeEndpoint, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'Accept': 'application/json'
-            }
-          })
-                  .then(response => {
-                    if (response.ok) {
-                      console.log('Form submitted successfully');
-                    } else {
-                      console.error('Form submission error');
-                    }
-                  })
-                  .catch(error => {
-                    console.error('Error:', error);
-                  });
-        }
-
-        // Auto-open chatbot after 5 seconds
-        setTimeout(function() {
-          $chatbotWindow.addClass('active');
-          $chatbotButton.addClass('active');
-        }, 5000);
-      });
-    </script>
-  </body>
+    // Auto-open chatbot after 5 seconds
+    setTimeout(function() {
+      $chatbotWindow.addClass('active');
+      $chatbotButton.addClass('active');
+    }, 5000);
+  });
+</script>
+</body>
 </html>
