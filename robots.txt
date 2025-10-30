@@ -1,0 +1,19 @@
+# robots.txt for https://www.optimacoretech.com
+# This file controls how search engines crawl your website
+
+User-agent: *
+# Block sensitive folders
+Disallow: /admin/
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /private/
+Disallow: /server/
+
+# Allow all public pages to be crawled
+Allow: /
+
+# Sitemap: helps Google and Bing discover all pages efficiently
+Sitemap: https://www.optimacoretech.com/sitemap.xml
+
+# Crawl-delay (optional, prevents server overload)
+Crawl-delay: 5
