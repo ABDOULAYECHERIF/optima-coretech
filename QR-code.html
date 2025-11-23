@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="QR Code Generator - Create beautiful, scannable QR codes instantly">
+    <meta name="author" content="potenzaglobalsolutions.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>QR Code Generator - OptimacoreTech</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Russo+One&display=swap" rel="stylesheet">
+
+    <!-- CSS Global Compulsory (Do not remove)-->
+    <link rel="stylesheet" href="css/font-awesome/all.min.css">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+    <!-- Page CSS Implementing Plugins (Remove the plugin CSS here if site does not use that feature)-->
+    <link rel="stylesheet" href="css/owl-carousel/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/swiper/swiper.min.css">
+    <link rel="stylesheet" href="css/magnific-popup/magnific-popup.css">
+    <!-- Template Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- QR Code Generator Styles -->
+    <style>
+        /* QR Code Generator Styles */
+        .qr-generator-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 80px 0;
+            border-radius: 20px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-generator-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .qr-header h2 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .qr-header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .qr-controls {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #6c63ff;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+        }
+
+        #generate-btn {
+            padding: 15px 30px;
+            background: #6c63ff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        #generate-btn:hover {
+            background: #554fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+        }
+
+        .customization-panel {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .color-options, .size-options {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-options label, .size-options label {
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 1rem;
+        }
+
+        #qr-color {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #qr-size {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .qr-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+            background: #f8fafc;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            border: 2px dashed #e2e8f0;
+        }
+
+        .qr-placeholder {
+            text-align: center;
+            color: #a0aec0;
+        }
+
+        .qr-icon {
+            margin-bottom: 15px;
+            color: #cbd5e0;
+        }
+
+        .qr-placeholder p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        #qr-code-container {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #qr-code-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .qr-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover:not(:disabled) {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+        }
+
+        .download-btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .reset-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: #ed8936;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #dd771c;
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .qr-generator-container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .customization-panel {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .qr-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!--=================================
+cursor -->
+<div id="cursor">
+    <div class="cursor__circle"></div>
+</div>
+<!--=================================
+cursor -->
+
+<div id="page" class="main">
+
+    <!--=================================
+    Header -->
+    <header class="header header-default header-sticky">
+        <div class="header-inner">
+            <div class="site-logo">
+                <a class="navbar-brand" href="index.html">
+                    <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
+                </a>
+            </div>
+            <div class="site-menu d-none d-xl-block">
+                <ul class="main-menu">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home </a></li>
+                    <li class="nav-item"><a class="nav-link" href="about-us.html">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="service.html">Service</a></li>
+                    <li class="nav-item active"><a class="nav-link active" href="qr-generator.html">QR Generator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="site-action d-none d-xl-block">
+                <div class="action-hamburger">
+                    <a class="hamburger" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                <span class="hamburger-container">
+                  <span class="hamburger-inner"></span>
+                  <span class="hamburger-hidden"></span>
+                </span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mobile-action d-block d-xl-none">
+                <div class="mobile-hamburger">
+                    <a class="hamburger" href="#" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas">
+                <span class="hamburger-container">
+                  <span class="hamburger-inner"></span>
+                  <span class="hamburger-hidden"></span>
+                </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!--=================================
+          Main Menu OffCanvas -->
+    <div class="offcanvas main-menu-offcanvas offcanvas-end" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
+        <div class="offcanvas-header">
+            <a class="navbar-brand" href="index.html">
+                <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
+            </a>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="offcanvas-body lenis-scroll-disable">
+            <div class="body-inner">
+                <nav class="navbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="service.html">Service</a></li>
+                        <li class="nav-item"><a class="nav-link" href="about-us.html">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="qr-generator.html">QR Generator</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
+                    </ul>
+                </nav>
+                <div class="bottom-info">
+                    <div class="contact-info">
+                        <span class="number">+32 465 856 075</span>
+                        <a class="mail" href="#"><i class="fa-regular fa-envelope"></i>optimacoretech@outlook.com</a>
+                        <span class="text">Create beautiful QR codes for your business</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--=================================
+      Header Side Panel -->
+    <div class="offcanvas offcanvas-end sidepanel-offcanvas" tabindex="-1" id="offcanvasRight">
+        <div class="offcanvas-header">
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="offcanvas-body lenis-scroll-disable">
+            <div class="body-inner">
+                <!-- About Section -->
+                <div class="about-info">
+                    <h4 class="title mb-3">QR Code Generator</h4>
+                    <p>Create beautiful, scannable QR codes for your business, marketing materials, or personal use with our easy-to-use generator.</p>
+                </div>
+
+                <!-- Social Links -->
+                <div class="social-info mt-4">
+                    <ul class="social-list-item">
+                        <li><a href="#"><i class="fa-brands fa-facebook-f"></i> Facebook</a></li>
+                        <li><a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a></li>
+                        <li><a href="#"><i class="fa-brands fa-x-twitter"></i> Twitter</a></li>
+                        <li><a href="#"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info mt-4">
+                    <span class="number">+32 465 856 075</span>
+                    <a class="mail" href="mailto:info@yourcompany.com">
+                        <i class="fa-regular fa-envelope"></i> optimacoretech@outlook.com
+                    </a>
+                    <span class="text d-block mt-2">Need custom QR code solutions? Let's discuss your requirements.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--=================================
+          Header Side Panel -->
+
+    <div class="site-content">
+
+        <div class="container-fluid">
+            <div class="item-efftect">
+                <div class="efftect overflow-hidden"></div>
+                <div class="efftect overflow-hidden"></div>
+                <div class="efftect overflow-hidden"></div>
+                <div class="efftect overflow-hidden"></div>
+                <div class="efftect overflow-hidden"></div>
+            </div>
+        </div>
+
+        <!--=================================
+        Page Header -->
+        <div class="inner-header bg-holder" style="background-image: url(images/banner/inner-header/page-header-01.jpg);">
+            <div class="container">
+                <div class="row  justify-content-center">
+                    <div class="col-md-12 text-center">
+                        <h1 class="title">QR Code Generator</h1>
+                        <p>Create beautiful, scannable QR codes in seconds</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+
+            <!--=================================
+            QR Code Generator Section -->
+            <section class="qr-generator-section">
+                <div class="container">
+                    <div class="qr-generator-container">
+                        <div class="qr-header">
+                            <h2>Generate QR Codes Instantly</h2>
+                            <p>Create custom QR codes for URLs, text, contact info, and more. Download and use them anywhere!</p>
+                        </div>
+
+                        <div class="qr-controls">
+                            <div class="input-group">
+                                <input type="text" id="qr-text" placeholder="Enter URL, text, or contact information..." maxlength="256" value="https://optimacoretech.com">
+                                <button id="generate-btn">Generate QR Code</button>
+                            </div>
+
+                            <div class="customization-panel">
+                                <div class="color-options">
+                                    <label>Color:</label>
+                                    <input type="color" id="qr-color" value="#6c63ff">
+                                </div>
+                                <div class="size-options">
+                                    <label>Size:</label>
+                                    <select id="qr-size">
+                                        <option value="200">Small</option>
+                                        <option value="300" selected>Medium</option>
+                                        <option value="400">Large</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="qr-display">
+                            <div class="qr-placeholder">
+                                <div class="qr-icon">
+                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 7H7V3H3V7Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M3 17H7V13H3V17Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M13 7H17V3H13V7Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M13 17H17V13H13V17Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M8 8H10V10H8V8Z" fill="currentColor"/>
+                                        <path d="M8 14H10V16H8V14Z" fill="currentColor"/>
+                                        <path d="M14 8H16V10H14V8Z" fill="currentColor"/>
+                                        <path d="M14 14H16V16H14V14Z" fill="currentColor"/>
+                                        <path d="M20 4H22V6H20V4Z" fill="currentColor"/>
+                                        <path d="M20 10H22V12H20V10Z" fill="currentColor"/>
+                                        <path d="M20 16H22V18H20V16Z" fill="currentColor"/>
+                                        <path d="M10 20H12V22H10V20Z" fill="currentColor"/>
+                                        <path d="M16 20H18V22H16V20Z" fill="currentColor"/>
+                                    </svg>
+                                </div>
+                                <p>Your QR code will appear here</p>
+                            </div>
+                            <div id="qr-code-container" class="hidden"></div>
+                        </div>
+
+                        <div class="qr-actions">
+                            <button id="download-btn" class="download-btn" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 16L12 4M12 16L8 12M12 16L16 12" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M4 20H20" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                Download QR Code
+                            </button>
+                            <button id="reset-btn" class="reset-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4 4V9H4.58152M19.9381 11C19.446 7.05369 16.0796 4 12 4C8.64262 4 5.76829 6.06817 4.58152 9M4.58152 9H9M20 20V15H19.4185M19.4185 15C18.2317 17.9318 15.3574 20 12 20C7.92038 20 4.55399 16.9463 4.06189 13M19.4185 15H15" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!--=================================
+            QR Code Generator Section -->
+
+            <!--=================================
+            Features Section -->
+            <section class="space-ptb">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            <div class="section-title text-center">
+                                <span class="sub-title d-flex justify-content-center"><img class="img-fluid" src="images/subtitle-icon.png" alt=""> Why Use Our QR Generator</span>
+                                <h2 class="title"> Create Professional QR Codes in Seconds </h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="feature-info feature-style-1 text-center">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h5 class="feature-title">Instant Generation</h5>
+                                    <p class="mb-0">Create QR codes instantly with our fast and reliable generator. No registration required.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="feature-info feature-style-1 text-center">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-palette"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h5 class="feature-title">Customizable Design</h5>
+                                    <p class="mb-0">Choose colors and sizes to match your brand identity and design requirements.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="feature-info feature-style-1 text-center">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-download"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h5 class="feature-title">High-Quality Download</h5>
+                                    <p class="mb-0">Download your QR codes in high resolution for print or digital use.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!--=================================
+            Features Section -->
+
+        </div>
+    </div>
+
+    <!--=================================
+ Site Footer -->
+    <footer class="site-footer footer-dark">
+        <div class="footer-main">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-md-5">
+                        <div class="widget widget-address-info">
+                            <h5 class="widget-title">Where To Find Us</h5>
+                            <ul class="address-info-list">
+                                <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-contacts.svg" alt=""></i><span class="info"><span>Antwerp 2060</span>Belgium</span></li>
+                                <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-headphone.svg" alt=""></i><span class="info"><span>+32 465 856 075</span>Mon-fri 8:30am 6:30pm</span></li>
+                                <li><i class="icon"><img class="img-fluid" src="images/svg/address-info-email.svg" alt=""></i><span class="info"><span>optimacoretech@outlook.com</span>24x7 online support</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-5 col-md-7">
+                        <div class="widget">
+                            <h5 class="widget-title">Quick Links</h5>
+                            <div class="widget widget-menu">
+                                <ul class="list-unstyled list-col-3 mb-0">
+                                    <li><a href="index.html">Home</a></li>
+                                    <li><a href="service.html">Services</a></li>
+                                    <li><a href="about-us.html">About Us</a></li>
+                                    <li><a href="qr-generator.html">QR Generator</a></li>
+                                    <li><a href="contact-us.html">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-12 ms-auto">
+                        <div class="widget widget-info">
+                            <h5 class="widget-title">Need Help?</h5>
+                            <a class="number" href="tel:+32 465 856 075">+32 465 856 075</a>
+                            <h6 class="title">We're here to assist you</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6"><p> <a class="navbar-brand" href="index.html">
+                        <img class="img-fluid" src="images/favicon.ico" alt="logo" style="max-height: 100px; height: auto; width: auto;">
+                    </a></p></div>
+                    <div class="col-lg-6 text-lg-end"><p>Develop and design by <a href="#">OptimacoreTech</a></p></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!--=================================
+    Back To Top -->
+    <div class="back-to-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewbox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"></path>
+        </svg>
+    </div>
+
+</div>
+<!--=================================
+Javascript -->
+<!-- JS Global Compulsory (Do not remove)-->
+<script src="js/jquery-3.7.1.min.js"></script>
+<script src="js/jquery.appear.js"></script>
+<script src="js/popper/popper.min.js"></script>
+<script src="js/bootstrap/bootstrap.min.js"></script>
+<!-- Page JS Implementing Plugins (Remove the plugin script here if site does not use that feature)-->
+<script src="js/owl-carousel/owl.carousel.min.js"></script>
+<script src="js/jarallax/jarallax.min.js"></script>
+<script src="js/jarallax/jarallax-video.min.js"></script>
+<script src="js/swiper/swiper.min.js"></script>
+<script src="js/swiperanimation/SwiperAnimation.min.js"></script>
+<script src="js/shuffle/shuffle.min.js"></script>
+<script src="js/magnific-popup/jquery.magnific-popup.js"></script>
+<script src="js/counter/jquery.countTo.js"></script>
+<script src="js/gsap.min.js"></script>
+<script src="js/attractHover.js"></script>
+<script src="js/lenis.min.js"></script>
+<script src="js/custom.js"></script>
+
+<!-- QR Code Generator Script -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const qrText = document.getElementById('qr-text');
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const qrColor = document.getElementById('qr-color');
+        const qrSize = document.getElementById('qr-size');
+        const qrContainer = document.getElementById('qr-code-container');
+        const qrPlaceholder = document.querySelector('.qr-placeholder');
+
+        // Generate QR code
+        generateBtn.addEventListener('click', generateQRCode);
+
+        // Download QR code
+        downloadBtn.addEventListener('click', downloadQRCode);
+
+        // Reset form
+        resetBtn.addEventListener('click', resetForm);
+
+        // Generate on Enter key
+        qrText.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                generateQRCode();
+            }
+        });
+
+        function generateQRCode() {
+            const text = qrText.value.trim();
+            const color = qrColor.value;
+            const size = parseInt(qrSize.value);
+
+            if (!text) {
+                alert('Please enter some text or URL');
+                return;
+            }
+
+            // Clear previous QR code
+            qrContainer.innerHTML = '';
+            qrContainer.classList.add('hidden');
+            qrPlaceholder.style.display = 'block';
+
+            try {
+                // Generate QR code using the library
+                const typeNumber = 0; // Auto type
+                const errorCorrectionLevel = 'L'; // Low error correction (smaller QR code)
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(text);
+                qr.make();
+
+                // Create QR code image
+                const qrImage = qr.createImgTag(5, 0); // 5 is the cell size, 0 is the margin
+
+                // Add the QR code to the container
+                qrContainer.innerHTML = qrImage;
+                const qrImg = qrContainer.querySelector('img');
+
+                // Apply custom color using CSS filter
+                applyColorFilter(qrImg, color);
+
+                // Resize the QR code
+                qrImg.style.width = size + 'px';
+                qrImg.style.height = size + 'px';
+
+                // Show the QR code with animation
+                setTimeout(() => {
+                    qrPlaceholder.style.display = 'none';
+                    qrContainer.classList.remove('hidden');
+                    qrContainer.classList.add('fade-in');
+                    downloadBtn.disabled = false;
+                }, 300);
+
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                alert('Error generating QR code. Please try a shorter text.');
+            }
+        }
+
+        function applyColorFilter(imgElement, color) {
+            // Convert hex color to RGB
+            const hex = color.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+
+            // Create filter to change black to the selected color
+            const filter = `invert(1) sepia(1) saturate(10000%) hue-rotate(${rgbToHue(r, g, b)}deg)`;
+            imgElement.style.filter = filter;
+        }
+
+        function rgbToHue(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let hue = 0;
+
+            if (max === min) {
+                hue = 0;
+            } else {
+                const delta = max - min;
+                switch (max) {
+                    case r: hue = ((g - b) / delta) % 6; break;
+                    case g: hue = (b - r) / delta + 2; break;
+                    case b: hue = (r - g) / delta + 4; break;
+                }
+                hue = Math.round(hue * 60);
+                if (hue < 0) hue += 360;
+            }
+
+            return hue;
+        }
+
+        function downloadQRCode() {
+            const qrImg = qrContainer.querySelector('img');
+            if (qrImg) {
+                const link = document.createElement('a');
+                link.download = 'qr-code.png';
+                link.href = qrImg.src;
+                link.click();
+            }
+        }
+
+        function resetForm() {
+            qrText.value = 'https://optimacoretech.com';
+            qrColor.value = '#6c63ff';
+            qrSize.value = '300';
+            qrContainer.innerHTML = '';
+            qrContainer.classList.add('hidden');
+            qrPlaceholder.style.display = 'block';
+            downloadBtn.disabled = true;
+
+            // Regenerate QR code with default values
+            setTimeout(generateQRCode, 100);
+        }
+
+        // Auto-generate QR code on page load
+        setTimeout(generateQRCode, 500);
+    });
+</script>
+</body>
+</html>
