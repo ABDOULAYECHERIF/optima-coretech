@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEAKD — Invisible Money Leak Detector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --void: #060608;
+  --void2: #0a0a0e;
+  --void3: #0f0f15;
+  --void4: #16161e;
+  --void5: #1e1e28;
+  --red: #ff2244;
+  --red2: #ff4466;
+  --red3: rgba(255,34,68,0.15);
+  --red4: rgba(255,34,68,0.06);
+  --amber: #ffaa00;
+  --amber2: rgba(255,170,0,0.12);
+  --green: #00e87a;
+  --green2: rgba(0,232,122,0.1);
+  --white: #f0eee8;
+  --silver: #6a6a80;
+  --silver2: #9898b0;
+  --silver3: #c0c0d0;
+  --border: rgba(255,255,255,0.07);
+  --border-red: rgba(255,34,68,0.25);
+  --r: 10px;
+  --r2: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--void);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── GRAIN ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+/* ── GRID BG ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(255,34,68,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,34,68,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 68px;
+  background: rgba(6,6,8,0.92);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+}
+.logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+.logo-icon {
+  width: 38px; height: 38px; border-radius: 8px;
+  background: var(--red); display: flex; align-items: center; justify-content: center;
+  font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 16px; color: #fff;
+  box-shadow: 0 0 20px rgba(255,34,68,0.4);
+  animation: logoGlow 3s ease infinite;
+}
+@keyframes logoGlow {
+  0%,100% { box-shadow: 0 0 20px rgba(255,34,68,0.4); }
+  50% { box-shadow: 0 0 35px rgba(255,34,68,0.7); }
+}
+.logo-name {
+  font-family: 'Unbounded', sans-serif; font-weight: 900;
+  font-size: 20px; letter-spacing: 3px; color: var(--white);
+}
+.logo-tag { font-size: 9px; color: var(--silver); letter-spacing: 2.5px; text-transform: uppercase; margin-top: 2px; }
+.topbar-status {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--silver);
+  letter-spacing: 1px;
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+  animation: blink 2s ease infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ── PAGE ── */
+.page { position: relative; z-index: 1; }
+
+/* ── HERO ── */
+.hero {
+  padding: 80px 48px 60px;
+  max-width: 900px;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--red); margin-bottom: 28px;
+  background: var(--red4); border: 1px solid var(--border-red);
+  padding: 6px 16px; border-radius: 20px;
+}
+.hero-eyebrow::before { content: '◉'; animation: blink 1.5s ease infinite; }
+.hero-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(42px, 6vw, 80px);
+  font-weight: 900; line-height: .95;
+  letter-spacing: -2px;
+  color: var(--white);
+  margin-bottom: 24px;
+}
+.hero-title span {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--red);
+}
+.hero-sub {
+  font-size: 16px; color: var(--silver2); line-height: 1.7;
+  max-width: 560px; font-weight: 400;
+}
+
+/* ── MAIN LAYOUT ── */
+.workspace {
+  display: grid;
+  grid-template-columns: 520px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 68px - 260px);
+  border-top: 1px solid var(--border);
+}
+
+/* ── INPUT PANEL ── */
+.input-panel {
+  border-right: 1px solid var(--border);
+  padding: 36px 40px 60px;
+  background: var(--void2);
+  overflow-y: auto;
+}
+.panel-title {
+  font-family: 'Unbounded', sans-serif; font-size: 11px;
+  font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--silver); margin-bottom: 28px;
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* currency selector */
+.currency-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+}
+.currency-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--silver); letter-spacing: 1px; }
+.currency-select {
+  background: var(--void4); border: 1px solid var(--border);
+  color: var(--white); padding: 8px 14px; border-radius: 8px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  outline: none; cursor: pointer;
+}
+.currency-select:focus { border-color: var(--border-red); }
+
+/* income row */
+.income-row {
+  background: var(--void3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 20px 22px; margin-bottom: 28px;
+}
+.income-label {
+  font-family: 'Unbounded', sans-serif; font-size: 10px;
+  font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--green); margin-bottom: 10px;
+}
+.income-input-wrap { display: flex; align-items: center; gap: 0; }
+.currency-prefix {
+  background: rgba(0,232,122,0.1); border: 1px solid rgba(0,232,122,0.2);
+  border-right: none; border-radius: 8px 0 0 8px;
+  padding: 12px 14px;
+  font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: var(--green);
+}
+.income-input {
+  flex: 1; background: var(--void4); border: 1px solid rgba(0,232,122,0.2);
+  border-left: none; border-radius: 0 8px 8px 0;
+  color: var(--white); padding: 12px 16px;
+  font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500;
+  outline: none; transition: .2s;
+}
+.income-input:focus { border-color: var(--green); background: rgba(0,232,122,0.05); }
+.income-input::placeholder { color: rgba(255,255,255,0.15); }
+
+/* expense entries */
+.entries-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+.entry-row {
+  display: grid; grid-template-columns: 1fr 120px 40px;
+  gap: 8px; align-items: center;
+  background: var(--void3); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 12px;
+  transition: border-color .2s;
+  animation: entryIn .3s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes entryIn { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
+.entry-row:hover { border-color: rgba(255,255,255,0.12); }
+.entry-row:focus-within { border-color: var(--border-red); }
+
+.entry-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.category-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.entry-name {
+  width: 100%; background: transparent; border: none; outline: none;
+  font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--white); min-width: 0;
+}
+.entry-name::placeholder { color: var(--silver); }
+
+.entry-amount-wrap { display: flex; align-items: center; gap: 0; }
+.entry-sym {
+  font-family: 'DM Mono', monospace; font-size: 12px; color: var(--silver);
+  background: var(--void4); border: 1px solid var(--border);
+  border-right: none; padding: 8px 8px; border-radius: 6px 0 0 6px;
+}
+.entry-amount {
+  width: 80px; background: var(--void4); border: 1px solid var(--border);
+  border-left: none; border-radius: 0 6px 6px 0;
+  color: var(--white); padding: 8px 8px;
+  font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+  outline: none; text-align: right; transition: .2s;
+}
+.entry-amount:focus { border-color: var(--red2); }
+
+.entry-freq {
+  background: var(--void4); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--silver2); padding: 8px 6px;
+  font-family: 'DM Mono', monospace; font-size: 10px; outline: none; cursor: pointer;
+  width: 100%;
+}
+.entry-freq:focus { border-color: var(--border-red); }
+
+.btn-del-entry {
+  width: 32px; height: 32px; border-radius: 6px;
+  border: 1px solid rgba(255,34,68,0.2);
+  background: rgba(255,34,68,0.06); color: var(--red2);
+  cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center;
+  transition: .2s; flex-shrink: 0;
+}
+.btn-del-entry:hover { background: rgba(255,34,68,0.15); border-color: var(--red); }
+
+/* category picker */
+.cat-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.cat-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--void3);
+  font-size: 11px; font-weight: 600; color: var(--silver2);
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+  font-family: 'DM Mono', monospace; letter-spacing: .5px;
+}
+.cat-chip:hover { border-color: rgba(255,255,255,0.2); color: var(--white); }
+.cat-chip .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* add button */
+.btn-add-entry {
+  width: 100%; padding: 12px; border-radius: var(--r);
+  border: 1px dashed rgba(255,255,255,0.12); background: transparent;
+  color: var(--silver); font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 28px;
+}
+.btn-add-entry:hover { border-color: var(--border-red); color: var(--red2); background: var(--red4); }
+
+/* analyze button */
+.btn-analyze {
+  width: 100%; padding: 18px; border-radius: var(--r2);
+  border: none; background: var(--red);
+  color: #fff; font-family: 'Unbounded', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all .3s;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  box-shadow: 0 8px 30px rgba(255,34,68,0.3);
+  position: relative; overflow: hidden;
+}
+.btn-analyze::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transform: translateX(-100%); transition: .5s;
+}
+.btn-analyze:hover::after { transform: translateX(100%); }
+.btn-analyze:hover { background: var(--red2); transform: translateY(-2px); box-shadow: 0 14px 40px rgba(255,34,68,0.45); }
+
+/* presets */
+.presets-row { margin-bottom: 24px; }
+.presets-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--silver); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.preset-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.preset-chip {
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--void3);
+  color: var(--silver2); font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: .2s; font-family: 'Instrument Sans', sans-serif;
+}
+.preset-chip:hover { border-color: var(--border-red); color: var(--red2); background: var(--red4); }
+
+/* ── RESULTS PANEL ── */
+.results-panel { padding: 36px 40px 60px; background: var(--void); overflow-y: auto; }
+
+/* SCAN ANIMATION */
+.scan-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 400px; text-align: center;
+}
+.scan-ring {
+  width: 120px; height: 120px; border-radius: 50%;
+  border: 2px solid rgba(255,34,68,0.1);
+  border-top-color: var(--red);
+  animation: scanSpin 1s linear infinite;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 28px; position: relative;
+}
+.scan-ring::after {
+  content: ''; position: absolute; inset: 8px;
+  border-radius: 50%; border: 1px solid rgba(255,34,68,0.15);
+  border-top-color: rgba(255,34,68,0.4);
+  animation: scanSpin .7s linear infinite reverse;
+}
+@keyframes scanSpin { to{ transform: rotate(360deg); } }
+.scan-icon { font-size: 36px; z-index: 1; }
+.scan-text { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--red); text-transform: uppercase; }
+.scan-sub { font-size: 12px; color: var(--silver); font-family: 'DM Mono', monospace; margin-top: 8px; letter-spacing: 1px; }
+
+/* EMPTY STATE */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 400px; text-align: center; opacity: .6;
+}
+.empty-icon { font-size: 64px; margin-bottom: 20px; filter: grayscale(1); }
+.empty-title { font-family: 'Unbounded', sans-serif; font-size: 16px; font-weight: 700; color: var(--silver); letter-spacing: 1px; margin-bottom: 8px; }
+.empty-sub { font-size: 13px; color: var(--silver); }
+
+/* BIG SAVE NUMBER */
+.save-hero {
+  background: linear-gradient(135deg, var(--void3), var(--void4));
+  border: 1px solid var(--border-red);
+  border-radius: var(--r2); padding: 32px 36px;
+  margin-bottom: 24px; position: relative; overflow: hidden;
+  animation: resultIn .6s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes resultIn { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.save-hero::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--amber), var(--red));
+}
+.save-hero-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--red);
+  margin-bottom: 12px;
+}
+.save-amount {
+  font-family: 'Unbounded', sans-serif; font-size: clamp(44px, 6vw, 72px);
+  font-weight: 900; line-height: 1; letter-spacing: -2px;
+  color: var(--red); margin-bottom: 8px;
+}
+.save-period { font-size: 14px; color: var(--silver2); margin-bottom: 20px; }
+.save-breakdown {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);
+}
+.sb-item {}
+.sb-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--silver); margin-bottom: 6px; }
+.sb-val { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; }
+.sb-val.red { color: var(--red); }
+.sb-val.amber { color: var(--amber); }
+.sb-val.green { color: var(--green); }
+
+/* LEAK CARDS */
+.leaks-section { margin-bottom: 28px; }
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Unbounded', sans-serif; font-size: 12px;
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--white);
+  display: flex; align-items: center; gap: 10px;
+}
+.section-count {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  background: var(--red3); border: 1px solid var(--border-red);
+  color: var(--red); padding: 2px 10px; border-radius: 20px;
+}
+
+.leak-cards { display: flex; flex-direction: column; gap: 10px; }
+
+.leak-card {
+  border-radius: var(--r); padding: 16px 18px;
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: 14px; align-items: center;
+  animation: resultIn .4s cubic-bezier(0.16,1,0.3,1) both;
+  transition: transform .2s;
+}
+.leak-card:hover { transform: translateX(4px); }
+
+.leak-card.critical {
+  background: linear-gradient(135deg, rgba(255,34,68,0.08), rgba(255,34,68,0.03));
+  border: 1px solid rgba(255,34,68,0.2);
+}
+.leak-card.warning {
+  background: linear-gradient(135deg, rgba(255,170,0,0.06), rgba(255,170,0,0.02));
+  border: 1px solid rgba(255,170,0,0.2);
+}
+.leak-card.neutral {
+  background: var(--void3);
+  border: 1px solid var(--border);
+}
+
+.leak-severity-bar {
+  width: 4px; height: 48px; border-radius: 2px; flex-shrink: 0;
+}
+.critical .leak-severity-bar { background: var(--red); box-shadow: 0 0 10px rgba(255,34,68,0.4); }
+.warning .leak-severity-bar { background: var(--amber); }
+.neutral .leak-severity-bar { background: var(--silver); }
+
+.leak-info {}
+.leak-name {
+  font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 3px;
+}
+.leak-reason { font-size: 12px; color: var(--silver2); line-height: 1.4; }
+.leak-suggestion { font-size: 11px; color: var(--green); margin-top: 4px; font-style: italic; }
+
+.leak-right { text-align: right; flex-shrink: 0; }
+.leak-amount {
+  font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 700;
+  margin-bottom: 3px;
+}
+.critical .leak-amount { color: var(--red); }
+.warning .leak-amount { color: var(--amber); }
+.neutral .leak-amount { color: var(--silver2); }
+.leak-freq-tag {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--silver); padding: 2px 8px;
+  border-radius: 4px; background: var(--void5); display: inline-block;
+}
+
+/* CHART SECTION */
+.chart-section {
+  background: var(--void3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 22px;
+  margin-bottom: 20px;
+  animation: resultIn .5s cubic-bezier(0.16,1,0.3,1) .1s both;
+}
+.chart-title-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.chart-title {
+  font-family: 'Unbounded', sans-serif; font-size: 11px;
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--white);
+}
+.chart-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--silver); letter-spacing: 1px; }
+
+/* SAVINGS TIMELINE */
+.timeline-section {
+  background: var(--void3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 22px; margin-bottom: 20px;
+  animation: resultIn .5s cubic-bezier(0.16,1,0.3,1) .15s both;
+}
+.timeline-bars { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
+.tl-row { display: flex; align-items: center; gap: 12px; }
+.tl-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--silver); width: 56px; text-align: right; letter-spacing: .5px; flex-shrink: 0; }
+.tl-track { flex: 1; height: 28px; background: rgba(255,255,255,0.03); border-radius: 6px; overflow: hidden; }
+.tl-fill {
+  height: 100%; border-radius: 6px;
+  display: flex; align-items: center; padding-left: 10px;
+  transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+}
+.tl-fill-val { font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700; color: white; white-space: nowrap; }
+.tl-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--silver); width: 52px; text-align: left; flex-shrink: 0; }
+
+/* HEALTH SCORE */
+.health-section {
+  background: var(--void3); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 22px; margin-bottom: 20px;
+  animation: resultIn .5s cubic-bezier(0.16,1,0.3,1) .2s both;
+}
+.health-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.health-gauge-wrap { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+.health-gauge-wrap canvas { position: absolute; inset: 0; }
+.health-score-label {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'Unbounded', sans-serif;
+}
+.health-score-num { font-size: 26px; font-weight: 900; }
+.health-score-txt { font-size: 8px; letter-spacing: 1.5px; color: var(--silver); text-transform: uppercase; margin-top: 2px; }
+.health-details { flex: 1; min-width: 180px; }
+.health-grade {
+  font-family: 'Unbounded', sans-serif; font-size: 28px; font-weight: 900;
+  margin-bottom: 4px;
+}
+.health-desc { font-size: 13px; color: var(--silver2); line-height: 1.5; }
+
+/* RESPONSIVE */
+@media(max-width: 1000px) {
+  .workspace { grid-template-columns: 1fr; }
+  .results-panel { border-top: 1px solid var(--border); }
+  .topbar, .input-panel, .results-panel, .hero { padding-left: 20px; padding-right: 20px; }
+  .hero { padding-top: 48px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="#" class="logo">
+    <div class="logo-icon">L</div>
+    <div>
+      <div class="logo-name">LEAKD</div>
+      <div class="logo-tag">Money Leak Detector</div>
+    </div>
+  </a>
+  <div class="topbar-status">
+    <div class="status-dot"></div>
+    SCANNER READY
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Financial Forensics Tool</div>
+    <h1 class="hero-title">FIND YOUR<br><span>INVISIBLE</span><br>MONEY LEAKS</h1>
+    <p class="hero-sub">Enter your expenses below. The scanner analyzes every line, detects unnecessary spending, and shows exactly where your money is silently disappearing.</p>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+
+    <!-- INPUT PANEL -->
+    <aside class="input-panel">
+      <div class="panel-title">Configure Scanner</div>
+
+      <!-- Currency -->
+      <div class="currency-row">
+        <span class="currency-label">CURRENCY</span>
+        <select class="currency-select" id="currencySelect" onchange="updateCurrencyDisplay()">
+          <option value="€">€ EUR — Euro</option>
+          <option value="$">$ USD — Dollar</option>
+          <option value="£">£ GBP — Pound</option>
+          <option value="CHF">CHF — Franc</option>
+          <option value="kr">kr — Krone</option>
+        </select>
+      </div>
+
+      <!-- Monthly Income -->
+      <div class="income-row">
+        <div class="income-label">Monthly Net Income (optional)</div>
+        <div class="income-input-wrap">
+          <div class="currency-prefix" id="incomePrefix">€</div>
+          <input type="number" class="income-input" id="incomeInput" placeholder="3500" min="0">
+        </div>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="presets-row">
+        <div class="presets-label">Quick Load Presets</div>
+        <div class="preset-chips">
+          <div class="preset-chip" onclick="loadPreset('singles')">🏠 Single Living</div>
+          <div class="preset-chip" onclick="loadPreset('couple')">💑 Couple</div>
+          <div class="preset-chip" onclick="loadPreset('techie')">💻 Tech Enthusiast</div>
+          <div class="preset-chip" onclick="loadPreset('subscriptions')">📱 Subscription Hell</div>
+        </div>
+      </div>
+
+      <!-- Category quick-add -->
+      <div class="panel-title" style="margin-bottom:14px">Quick Add by Category</div>
+      <div class="cat-picker" id="catPicker"></div>
+
+      <!-- Entries -->
+      <div class="panel-title" style="margin-bottom:14px">Your Expenses</div>
+      <div class="entries-list" id="entriesList"></div>
+      <button class="btn-add-entry" onclick="addEntry()">
+        + Add Expense Manually
+      </button>
+
+      <button class="btn-analyze" onclick="runAnalysis()">
+        ◉ &nbsp;Detect Money Leaks
+      </button>
+    </aside>
+
+    <!-- RESULTS PANEL -->
+    <div class="results-panel" id="resultsPanel">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">💸</div>
+        <div class="empty-title">Awaiting Scan</div>
+        <div class="empty-sub">Add your expenses and hit detect</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── CATEGORIES ──────────────────────────────────────────────
+const CATEGORIES = [
+  { name: 'Housing',      color: '#6b8fff', emoji: '🏠', examples: ['Rent','Mortgage','Home insurance'] },
+  { name: 'Streaming',    color: '#ff2244', emoji: '📺', examples: ['Netflix','Spotify','Disney+','HBO Max','Apple TV+'] },
+  { name: 'Food',         color: '#ffaa00', emoji: '🍔', examples: ['Groceries','Takeaway','Coffee','Lunch out','Delivery'] },
+  { name: 'Transport',    color: '#00e87a', emoji: '🚗', examples: ['Car insurance','Fuel','Public transit','Parking','Uber'] },
+  { name: 'Health',       color: '#ff7ae0', emoji: '🏥', examples: ['Gym','Health insurance','Supplements','Pharmacy'] },
+  { name: 'Software',     color: '#7af5ff', emoji: '💻', examples: ['Adobe CC','Microsoft 365','Notion','Dropbox','iCloud'] },
+  { name: 'Shopping',     color: '#f5c842', emoji: '🛍️', examples: ['Amazon Prime','Clothing','Electronics'] },
+  { name: 'Finance',      color: '#ff9955', emoji: '🏦', examples: ['Bank fees','Loan interest','Credit card fee','Overdraft'] },
+  { name: 'Social',       color: '#c084fc', emoji: '🎉', examples: ['Going out','Alcohol','Events','Dates'] },
+  { name: 'Misc',         color: '#8892a8', emoji: '🔧', examples: ['Subscriptions','Miscellaneous'] },
+];
+
+function catByName(n){ return CATEGORIES.find(c=>c.name===n)||CATEGORIES[9]; }
+
+// ── STATE ───────────────────────────────────────────────────
+let entries = [];
+let entryId = 0;
+
+// ── INIT ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  buildCatPicker();
+  loadPreset('singles');
+});
+
+function getCurrency(){ return document.getElementById('currencySelect').value; }
+function updateCurrencyDisplay(){
+  const sym = getCurrency();
+  document.getElementById('incomePrefix').textContent = sym;
+  document.querySelectorAll('.entry-sym').forEach(el => el.textContent = sym);
+  document.querySelectorAll('.e-sym').forEach(el => el.textContent = sym);
+}
+
+// ── CAT PICKER ──────────────────────────────────────────────
+function buildCatPicker(){
+  const picker = document.getElementById('catPicker');
+  picker.innerHTML = '';
+  CATEGORIES.slice(0,8).forEach(cat => {
+    const chip = document.createElement('div');
+    chip.className = 'cat-chip';
+    chip.innerHTML = `<span class="dot" style="background:${cat.color}"></span>${cat.emoji} ${cat.name}`;
+    chip.onclick = () => addEntry('', cat.name);
+    picker.appendChild(chip);
+  });
+}
+
+// ── ADD ENTRY ───────────────────────────────────────────────
+function addEntry(name='', catName='Misc', amount='', freq='monthly'){
+  const id = ++entryId;
+  const cat = catByName(catName);
+  entries.push({ id, name, catName, amount, freq });
+
+  const row = document.createElement('div');
+  row.className = 'entry-row';
+  row.id = 'entry-' + id;
+  row.style.animationDelay = '0s';
+  const sym = getCurrency();
+  row.innerHTML = `
+    <div class="entry-left">
+      <div class="category-dot" style="background:${cat.color}" title="${cat.name}"></div>
+      <input type="text" class="entry-name" placeholder="${cat.examples ? cat.examples[Math.floor(Math.random()*cat.examples.length)] : 'Expense name'}"
+        value="${name}" oninput="updateEntry(${id},'name',this.value)">
+    </div>
+    <div class="entry-amount-wrap">
+      <span class="entry-sym e-sym">${sym}</span>
+      <input type="number" class="entry-amount" placeholder="0" value="${amount}" min="0" step="0.01"
+        oninput="updateEntry(${id},'amount',this.value)">
+    </div>
+    <select class="entry-freq" onchange="updateEntry(${id},'freq',this.value)">
+      <option value="monthly"${freq==='monthly'?' selected':''}>Mo</option>
+      <option value="weekly"${freq==='weekly'?' selected':''}>Wk</option>
+      <option value="yearly"${freq==='yearly'?' selected':''}>Yr</option>
+      <option value="daily"${freq==='daily'?' selected':''}>Day</option>
+    </select>
+    <button class="btn-del-entry" onclick="removeEntry(${id})">✕</button>
+  `;
+  document.getElementById('entriesList').appendChild(row);
+}
+
+function updateEntry(id, key, val){
+  const e = entries.find(e=>e.id===id);
+  if(e) e[key] = val;
+}
+
+function removeEntry(id){
+  entries = entries.filter(e=>e.id!==id);
+  document.getElementById('entry-'+id)?.remove();
+}
+
+// monthly amount
+function toMonthly(amount, freq){
+  const a = parseFloat(amount)||0;
+  if(freq==='weekly') return a*4.333;
+  if(freq==='yearly') return a/12;
+  if(freq==='daily')  return a*30.44;
+  return a;
+}
+
+// ── PRESETS ─────────────────────────────────────────────────
+const PRESETS = {
+  singles: [
+    {name:'Rent / Mortgage',cat:'Housing',amount:950,freq:'monthly'},
+    {name:'Netflix',cat:'Streaming',amount:15.99,freq:'monthly'},
+    {name:'Spotify',cat:'Streaming',amount:9.99,freq:'monthly'},
+    {name:'Disney+',cat:'Streaming',amount:8.99,freq:'monthly'},
+    {name:'Groceries',cat:'Food',amount:280,freq:'monthly'},
+    {name:'Takeaway / Delivery',cat:'Food',amount:120,freq:'monthly'},
+    {name:'Daily coffee',cat:'Food',amount:4.5,freq:'daily'},
+    {name:'Car insurance',cat:'Transport',amount:95,freq:'monthly'},
+    {name:'Fuel',cat:'Transport',amount:80,freq:'monthly'},
+    {name:'Gym membership',cat:'Health',amount:45,freq:'monthly'},
+    {name:'Amazon Prime',cat:'Shopping',amount:8.99,freq:'monthly'},
+    {name:'iCloud 200GB',cat:'Software',amount:2.99,freq:'monthly'},
+    {name:'Bank account fee',cat:'Finance',amount:12,freq:'monthly'},
+    {name:'Going out / drinks',cat:'Social',amount:160,freq:'monthly'},
+  ],
+  couple: [
+    {name:'Rent / Mortgage',cat:'Housing',amount:1400,freq:'monthly'},
+    {name:'Netflix',cat:'Streaming',amount:15.99,freq:'monthly'},
+    {name:'Spotify Family',cat:'Streaming',amount:14.99,freq:'monthly'},
+    {name:'HBO Max',cat:'Streaming',amount:9.99,freq:'monthly'},
+    {name:'Groceries',cat:'Food',amount:480,freq:'monthly'},
+    {name:'Restaurants',cat:'Food',amount:200,freq:'monthly'},
+    {name:'Car loan',cat:'Transport',amount:340,freq:'monthly'},
+    {name:'Fuel',cat:'Transport',amount:140,freq:'monthly'},
+    {name:'2x Gym',cat:'Health',amount:90,freq:'monthly'},
+    {name:'Amazon Prime',cat:'Shopping',amount:8.99,freq:'monthly'},
+    {name:'Adobe CC',cat:'Software',amount:54.99,freq:'monthly'},
+    {name:'Home insurance',cat:'Housing',amount:65,freq:'monthly'},
+    {name:'Date nights',cat:'Social',amount:240,freq:'monthly'},
+  ],
+  techie: [
+    {name:'Apartment',cat:'Housing',amount:1100,freq:'monthly'},
+    {name:'Netflix 4K',cat:'Streaming',amount:22.99,freq:'monthly'},
+    {name:'Spotify',cat:'Streaming',amount:9.99,freq:'monthly'},
+    {name:'Apple TV+',cat:'Streaming',amount:8.99,freq:'monthly'},
+    {name:'YouTube Premium',cat:'Streaming',amount:11.99,freq:'monthly'},
+    {name:'Adobe CC',cat:'Software',amount:54.99,freq:'monthly'},
+    {name:'Microsoft 365',cat:'Software',amount:7.99,freq:'monthly'},
+    {name:'GitHub Pro',cat:'Software',amount:4,freq:'monthly'},
+    {name:'Notion',cat:'Software',amount:8,freq:'monthly'},
+    {name:'Dropbox Plus',cat:'Software',amount:11.99,freq:'monthly'},
+    {name:'iCloud 2TB',cat:'Software',amount:9.99,freq:'monthly'},
+    {name:'AWS unused',cat:'Software',amount:35,freq:'monthly'},
+    {name:'Domain names',cat:'Software',amount:12,freq:'monthly'},
+    {name:'Groceries',cat:'Food',amount:300,freq:'monthly'},
+    {name:'Delivery apps',cat:'Food',amount:180,freq:'monthly'},
+    {name:'Amazon Prime',cat:'Shopping',amount:8.99,freq:'monthly'},
+    {name:'Gym',cat:'Health',amount:40,freq:'monthly'},
+  ],
+  subscriptions: [
+    {name:'Netflix',cat:'Streaming',amount:22.99,freq:'monthly'},
+    {name:'Spotify',cat:'Streaming',amount:9.99,freq:'monthly'},
+    {name:'Disney+',cat:'Streaming',amount:8.99,freq:'monthly'},
+    {name:'HBO Max',cat:'Streaming',amount:9.99,freq:'monthly'},
+    {name:'Apple TV+',cat:'Streaming',amount:8.99,freq:'monthly'},
+    {name:'YouTube Premium',cat:'Streaming',amount:11.99,freq:'monthly'},
+    {name:'Amazon Prime',cat:'Shopping',amount:8.99,freq:'monthly'},
+    {name:'Audible',cat:'Misc',amount:14.95,freq:'monthly'},
+    {name:'Duolingo Plus',cat:'Misc',amount:6.99,freq:'monthly'},
+    {name:'Adobe CC',cat:'Software',amount:54.99,freq:'monthly'},
+    {name:'Microsoft 365',cat:'Software',amount:7.99,freq:'monthly'},
+    {name:'Notion',cat:'Software',amount:8,freq:'monthly'},
+    {name:'Dropbox',cat:'Software',amount:11.99,freq:'monthly'},
+    {name:'iCloud 2TB',cat:'Software',amount:9.99,freq:'monthly'},
+    {name:'NordVPN',cat:'Software',amount:4.99,freq:'monthly'},
+    {name:'Tinder Gold',cat:'Misc',amount:24.99,freq:'monthly'},
+    {name:'Calm app',cat:'Health',amount:6.99,freq:'monthly'},
+    {name:'MyFitnessPal',cat:'Health',amount:9.99,freq:'monthly'},
+    {name:'Gym',cat:'Health',amount:45,freq:'monthly'},
+    {name:'Rent',cat:'Housing',amount:950,freq:'monthly'},
+    {name:'Groceries',cat:'Food',amount:280,freq:'monthly'},
+  ],
+};
+
+function loadPreset(key){
+  entries = []; entryId = 0;
+  document.getElementById('entriesList').innerHTML = '';
+  const preset = PRESETS[key]||[];
+  preset.forEach(({name,cat,amount,freq}) => addEntry(name,cat,amount,freq));
+  const incomes = {singles:2800, couple:5200, techie:3600, subscriptions:2400};
+  document.getElementById('incomeInput').value = incomes[key]||3000;
+  resetResults();
+}
+
+// ── ANALYSIS ENGINE ─────────────────────────────────────────
+const LEAK_RULES = [
+  // STREAMING
+  { match: e => /netflix|hbo|disney|apple tv|hulu|paramount|peacock/i.test(e.name) && toMonthly(e.amount,e.freq)>10, severity:'warning', reason:'Premium streaming tier — standard tier saves ~40%', suggest: tip=>`Downgrade or share plan → save ~${fmt(toMonthly(tip.amount,tip.freq)*0.4)}/mo` },
+  { match: e => { const streamingCount = entries.filter(x=>/netflix|hbo|disney|apple tv|hulu|youtube premium|spotify|paramount/i.test(x.name)).length; return streamingCount>=4 && /netflix|hbo|disney|apple tv|hulu|youtube premium|spotify|paramount/i.test(e.name); }, severity:'critical', reason:'You have 4+ streaming services — massive overlap', suggest: e=>`Cut the 2 you watch least → save ~${fmt(toMonthly(e.amount,e.freq))}/mo` },
+  // COFFEE
+  { match: e => /coffee|espresso|starbucks|latte/i.test(e.name) && e.freq==='daily', severity:'critical', reason:'Daily coffee habit costs more than most subscriptions per year', suggest: e=>`Brew at home 5 days/week → save ~${fmt(toMonthly(e.amount,e.freq)*0.7)}/mo` },
+  // DELIVERY
+  { match: e => /delivery|uber eat|deliveroo|takeaway|doordash|just eat/i.test(e.name) && toMonthly(e.amount,e.freq)>60, severity:'critical', reason:'Food delivery markup averages 30–40% over cooking at home', suggest: e=>`Cook 3 extra meals/week → save ~${fmt(toMonthly(e.amount,e.freq)*0.5)}/mo` },
+  // GYM NO-SHOW
+  { match: e => /gym|fitness|sport/i.test(e.name) && toMonthly(e.amount,e.freq)>30, severity:'warning', reason:'Most gym memberships are used <2x/week on average', suggest: e=>`Try a cheaper flex gym or home workouts → save ~${fmt(toMonthly(e.amount,e.freq)*0.6)}/mo` },
+  // BANK FEES
+  { match: e => /bank fee|account fee|overdraft|maintenance fee/i.test(e.name), severity:'critical', reason:'Bank account fees are 100% avoidable — free accounts exist', suggest: e=>`Switch to Revolut, N26 or similar → save ${fmt(toMonthly(e.amount,e.freq))}/mo` },
+  // DUPLICATE CLOUD
+  { match: e => { const cloud = entries.filter(x=>/icloud|dropbox|google one|onedrive|drive/i.test(x.name)).length; return cloud>=2 && /icloud|dropbox|google one|onedrive|drive/i.test(e.name); }, severity:'warning', reason:'Multiple cloud storage services — you\'re paying for overlap', suggest: e=>`Pick one cloud provider → eliminate ${fmt(toMonthly(e.amount,e.freq))}/mo` },
+  // VPN
+  { match: e => /vpn/i.test(e.name) && toMonthly(e.amount,e.freq)>3, severity:'neutral', reason:'Cheaper VPN plans exist (annual billing vs monthly)', suggest: e=>`Switch to annual plan → save ~${fmt(toMonthly(e.amount,e.freq)*0.4)}/mo` },
+  // EATING OUT
+  { match: e => /restaurant|eating out|lunch out|dining/i.test(e.name) && toMonthly(e.amount,e.freq)>150, severity:'warning', reason:'Dining out frequently — meal prep could significantly reduce this', suggest: e=>`Batch cook lunches → save ~${fmt(toMonthly(e.amount,e.freq)*0.4)}/mo` },
+  // ADOBE CC
+  { match: e => /adobe/i.test(e.name) && toMonthly(e.amount,e.freq)>30, severity:'warning', reason:'Adobe CC is expensive — alternatives exist for many use cases', suggest: () => `Affinity Suite (one-time) or Canva Pro → save ~€40/mo` },
+  // UNUSED SOFTWARE
+  { match: e => /notion|slack|trello|asana|monday|airtable/i.test(e.name) && toMonthly(e.amount,e.freq)>0, severity:'neutral', reason:'Free tiers of productivity tools cover 90% of personal use', suggest: e=>`Downgrade to free plan → save ${fmt(toMonthly(e.amount,e.freq))}/mo` },
+  // ALCOHOL/SOCIAL HIGH
+  { match: e => /alcohol|drinks|bar |going out|social|party/i.test(e.name) && toMonthly(e.amount,e.freq)>100, severity:'warning', reason:'Social spending above average — slight reduction has big annual impact', suggest: e=>`Reduce by 25% → save ~${fmt(toMonthly(e.amount,e.freq)*0.25)}/mo` },
+  // CAR INSURANCE HIGH
+  { match: e => /car insurance|auto insurance/i.test(e.name) && toMonthly(e.amount,e.freq)>80, severity:'warning', reason:'Car insurance — annual comparison shopping typically saves 15–30%', suggest: e=>`Shop around annually → potential ${fmt(toMonthly(e.amount,e.freq)*0.2)}/mo saving` },
+  // HOME INSURANCE
+  { match: e => /home insurance|renter/i.test(e.name) && toMonthly(e.amount,e.freq)>50, severity:'neutral', reason:'Insurance premiums can often be reduced by bundling or switching', suggest: e=>`Bundle or switch insurer → save ~${fmt(toMonthly(e.amount,e.freq)*0.15)}/mo` },
+  // AMAZON PRIME
+  { match: e => /amazon prime/i.test(e.name), severity:'neutral', reason:'Amazon Prime includes services you may not use (music, reading, etc.)', suggest: () => `Evaluate actual usage — cancel if ordering <2x/month` },
+  // WEEKLY SPENDING
+  { match: e => e.freq==='weekly' && toMonthly(e.amount,e.freq)>200, severity:'warning', reason:'Weekly expenses compound fast — monthly budgeting reveals true cost', suggest: e=>`Annual cost: ${fmt(toMonthly(e.amount,e.freq)*12)} — reduce by 20% to save ${fmt(toMonthly(e.amount,e.freq)*0.2)}/mo` },
+];
+
+function fmt(n, sym){ const s=sym||getCurrency(); const v=Math.abs(parseFloat(n)||0); return s+(v>=1000?(v/1000).toFixed(1)+'K':v.toFixed(2)); }
+
+function runAnalysis(){
+  const panel = document.getElementById('resultsPanel');
+
+  // Show scanning animation
+  panel.innerHTML = `
+    <div class="scan-state">
+      <div class="scan-ring"><div class="scan-icon">🔍</div></div>
+      <div class="scan-text">Scanning Expenses</div>
+      <div class="scan-sub">Running ${entries.length} entries through leak detection...</div>
+    </div>`;
+
+  setTimeout(() => {
+    buildResults(panel);
+  }, 1400);
+}
+
+function buildResults(panel){
+  const sym = getCurrency();
+  const income = parseFloat(document.getElementById('incomeInput').value)||0;
+
+  // Compute monthly amounts
+  const withMonthly = entries.map(e=>({...e, monthly:toMonthly(e.amount,e.freq)}));
+  const totalMonthly = withMonthly.reduce((s,e)=>s+e.monthly,0);
+
+  // Detect leaks
+  const leakResults = [];
+  withMonthly.forEach(entry => {
+    for(const rule of LEAK_RULES){
+      if(rule.match(entry)){
+        const saving = estimateSaving(entry, rule.severity);
+        leakResults.push({
+          entry, rule, saving,
+          severity: rule.severity,
+          reason: rule.reason,
+          suggest: typeof rule.suggest === 'function' ? rule.suggest(entry) : rule.suggest,
+        });
+        break;
+      }
+    }
+  });
+
+  const totalSavable = leakResults.reduce((s,l)=>s+l.saving,0);
+  const critical = leakResults.filter(l=>l.severity==='critical');
+  const warnings = leakResults.filter(l=>l.severity==='warning');
+
+  // Category breakdown
+  const catMap = {};
+  withMonthly.forEach(e=>{
+    const cn = e.catName||'Misc';
+    if(!catMap[cn]) catMap[cn]=0;
+    catMap[cn]+=e.monthly;
+  });
+  const catEntries = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+
+  // Health score
+  const ratio = income>0 ? totalMonthly/income : 0.6;
+  const leakScore = Math.min(1, totalSavable/totalMonthly);
+  const healthScore = Math.max(5, Math.round(100 - ratio*60 - leakScore*40));
+  const grade = healthScore>=80?'A':healthScore>=65?'B':healthScore>=50?'C':healthScore>=35?'D':'F';
+  const gradeColor = healthScore>=80?'var(--green)':healthScore>=65?'var(--amber)':'var(--red)';
+
+  panel.innerHTML = '';
+
+  // BIG SAVE NUMBER
+  const saveEl = document.createElement('div');
+  saveEl.className='save-hero';
+  saveEl.innerHTML=`
+    <div class="save-hero-label">◉ Money Leak Report — Potential Monthly Savings</div>
+    <div class="save-amount">${fmt(totalSavable,sym)}</div>
+    <div class="save-period">per month you could save &nbsp;·&nbsp; ${fmt(totalSavable*12,sym)} per year</div>
+    <div class="save-breakdown">
+      <div class="sb-item">
+        <div class="sb-label">Total Spending</div>
+        <div class="sb-val red">${fmt(totalMonthly,sym)}</div>
+      </div>
+      <div class="sb-item">
+        <div class="sb-label">Leaks Found</div>
+        <div class="sb-val amber">${leakResults.length}</div>
+      </div>
+      <div class="sb-item">
+        <div class="sb-label">Savable %</div>
+        <div class="sb-val green">${totalMonthly>0?((totalSavable/totalMonthly)*100).toFixed(0):0}%</div>
+      </div>
+    </div>`;
+  panel.appendChild(saveEl);
+
+  // CHART: Category breakdown
+  const chartSection = document.createElement('div');
+  chartSection.className='chart-section';
+  const cid1='catChart_'+Date.now();
+  chartSection.innerHTML=`
+    <div class="chart-title-row">
+      <div><div class="chart-title">Spending by Category</div><div class="chart-sub">MONTHLY BREAKDOWN</div></div>
+    </div>
+    <div style="position:relative;height:220px"><canvas id="${cid1}"></canvas></div>`;
+  panel.appendChild(chartSection);
+
+  setTimeout(()=>{
+    const catColors = catEntries.map(([n])=>catByName(n).color);
+    new Chart(document.getElementById(cid1),{
+      type:'doughnut',
+      data:{
+        labels:catEntries.map(([n])=>n),
+        datasets:[{
+          data:catEntries.map(([,v])=>parseFloat(v.toFixed(2))),
+          backgroundColor:catColors.map(c=>c+'bb'),
+          borderColor:catColors,
+          borderWidth:2,
+          hoverOffset:8,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,cutout:'60%',
+        plugins:{
+          legend:{position:'right',labels:{color:'#9898b0',font:{family:"'DM Mono'",size:11},boxWidth:10,padding:12}},
+          tooltip:{backgroundColor:'rgba(6,6,8,0.95)',titleColor:'#ff2244',bodyColor:'#9898b0',
+            borderColor:'rgba(255,34,68,0.3)',borderWidth:1,cornerRadius:8,padding:12,
+            callbacks:{label:ctx=>`  ${sym}${ctx.parsed.toFixed(2)}/mo`}}
+        }
+      }
+    });
+  },100);
+
+  // LEAK CARDS
+  if(leakResults.length>0){
+    const leaksDiv=document.createElement('div');
+    leaksDiv.className='leaks-section';
+    leaksDiv.innerHTML=`
+      <div class="section-header">
+        <div class="section-title">Leaks Detected <span class="section-count">${leakResults.length} found</span></div>
+      </div>
+      <div class="leak-cards" id="leakCards"></div>`;
+    panel.appendChild(leaksDiv);
+
+    const sortedLeaks = [...leakResults].sort((a,b)=>{
+      const sev={critical:0,warning:1,neutral:2};
+      return sev[a.severity]-sev[b.severity]||b.saving-a.saving;
+    });
+
+    setTimeout(()=>{
+      const container=document.getElementById('leakCards');
+      if(!container)return;
+      sortedLeaks.forEach((l,i)=>{
+        const card=document.createElement('div');
+        card.className=`leak-card ${l.severity}`;
+        card.style.animationDelay=(i*.07)+'s';
+        const cat=catByName(l.entry.catName);
+        card.innerHTML=`
+          <div class="leak-severity-bar"></div>
+          <div class="leak-info">
+            <div class="leak-name">${cat.emoji} ${l.entry.name||'Unnamed expense'}</div>
+            <div class="leak-reason">${l.reason}</div>
+            <div class="leak-suggestion">→ ${l.suggest}</div>
+          </div>
+          <div class="leak-right">
+            <div class="leak-amount">−${fmt(l.saving,sym)}</div>
+            <div class="leak-freq-tag">${l.entry.freq}</div>
+          </div>`;
+        container.appendChild(card);
+      });
+    },200);
+  }
+
+  // SAVINGS TIMELINE
+  const tlSection=document.createElement('div');
+  tlSection.className='timeline-section';
+  const intervals=[
+    {label:'1 Mo',mult:1,color:'var(--red)'},
+    {label:'3 Mo',mult:3,color:'var(--amber)'},
+    {label:'6 Mo',mult:6,color:'var(--amber)'},
+    {label:'1 Yr',mult:12,color:'var(--green)'},
+    {label:'3 Yr',mult:36,color:'var(--green)'},
+    {label:'5 Yr',mult:60,color:'#7af5ff'},
+  ];
+  const maxVal=totalSavable*60;
+  tlSection.innerHTML=`
+    <div class="chart-title-row">
+      <div><div class="chart-title">Savings Projection</div><div class="chart-sub">IF YOU FIX ALL LEAKS TODAY</div></div>
+    </div>
+    <div class="timeline-bars" id="tlBars"></div>`;
+  panel.appendChild(tlSection);
+
+  setTimeout(()=>{
+    const cont=document.getElementById('tlBars');
+    if(!cont)return;
+    intervals.forEach(({label,mult,color},i)=>{
+      const val=totalSavable*mult;
+      const pct=maxVal>0?(val/maxVal*100):0;
+      const row=document.createElement('div');row.className='tl-row';
+      row.innerHTML=`
+        <div class="tl-label">${label}</div>
+        <div class="tl-track">
+          <div class="tl-fill" style="width:0%;background:linear-gradient(90deg,${color},${color}88);transition-delay:${i*.1}s">
+            <span class="tl-fill-val">${fmt(val,sym)}</span>
+          </div>
+        </div>
+        <div class="tl-sub" style="color:${color}">${mult>=12?'💰':mult>=6?'✦':'▸'}</div>`;
+      cont.appendChild(row);
+      setTimeout(()=>{ row.querySelector('.tl-fill').style.width=Math.max(8,pct)+'%'; },300+i*100);
+    });
+  },400);
+
+  // HEALTH SCORE GAUGE
+  const healthSec=document.createElement('div');
+  healthSec.className='health-section';
+  const gid='gauge_'+Date.now();
+  healthSec.innerHTML=`
+    <div class="chart-title-row">
+      <div><div class="chart-title">Financial Health Score</div><div class="chart-sub">BASED ON SPENDING PATTERNS</div></div>
+    </div>
+    <div class="health-row">
+      <div class="health-gauge-wrap">
+        <canvas id="${gid}" width="100" height="100"></canvas>
+        <div class="health-score-label">
+          <span class="health-score-num" style="color:${gradeColor}">${healthScore}</span>
+          <span class="health-score-txt">/ 100</span>
+        </div>
+      </div>
+      <div class="health-details">
+        <div class="health-grade" style="color:${gradeColor}">Grade: ${grade}</div>
+        <div class="health-desc">${getHealthDesc(healthScore, income, totalMonthly, sym)}</div>
+      </div>
+    </div>`;
+  panel.appendChild(healthSec);
+
+  setTimeout(()=>{
+    const gCanvas=document.getElementById(gid);if(!gCanvas)return;
+    new Chart(gCanvas,{
+      type:'doughnut',
+      data:{datasets:[{
+        data:[healthScore,100-healthScore],
+        backgroundColor:[gradeColor+99,'rgba(255,255,255,0.04)'],
+        borderColor:[gradeColor,'transparent'],
+        borderWidth:[2,0],
+        circumference:270,rotation:225,
+      }]},
+      options:{responsive:false,cutout:'78%',plugins:{legend:{display:false},tooltip:{enabled:false}}}
+    });
+  },300);
+
+  // QUICK WINS
+  const topSaves=leakResults.sort((a,b)=>b.saving-a.saving).slice(0,3);
+  if(topSaves.length>0){
+    const qwDiv=document.createElement('div');
+    qwDiv.style.cssText='animation:resultIn .5s cubic-bezier(0.16,1,0.3,1) .25s both';
+    qwDiv.innerHTML=`
+      <div class="section-header" style="margin-bottom:14px;margin-top:8px">
+        <div class="section-title">⚡ Top 3 Quick Wins</div>
+      </div>
+      ${topSaves.map((l,i)=>`
+        <div style="
+          display:flex;align-items:center;gap:14px;
+          background:var(--void3);border:1px solid var(--border);
+          border-radius:var(--r);padding:14px 16px;margin-bottom:10px;
+          animation:resultIn .4s cubic-bezier(0.16,1,0.3,1) ${(.3+i*.08)}s both;
+        ">
+          <div style="font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900;color:var(--red);min-width:32px">${i+1}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px">${l.entry.name}</div>
+            <div style="font-size:11px;color:var(--silver2)">${l.suggest}</div>
+          </div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;color:var(--green)">+${fmt(l.saving,sym)}</div>
+        </div>`).join('')}`;
+    panel.appendChild(qwDiv);
+  }
+}
+
+function estimateSaving(entry, severity){
+  const m = toMonthly(entry.amount, entry.freq);
+  if(severity==='critical') return m*0.55;
+  if(severity==='warning')  return m*0.30;
+  return m*0.20;
+}
+
+function getHealthDesc(score, income, total, sym){
+  if(score>=80) return `Excellent! Your spending is well-controlled. You're saving a healthy portion of your income.`;
+  if(score>=65) return `Good financial habits overall, but a few leaks are eroding your savings. Small fixes make a big difference.`;
+  if(score>=50) return `Several spending patterns are costing you silently. Fixing the top leaks could save ${sym}${Math.round(total*0.25)}/mo.`;
+  if(score>=35) return `Your expenses are consuming most of your income. Immediate action on critical leaks is strongly recommended.`;
+  return `Urgent: your spending significantly exceeds sustainable levels. ${income>0?`You're spending ${((total/income)*100).toFixed(0)}% of income.`:''}`;
+}
+
+function resetResults(){
+  document.getElementById('resultsPanel').innerHTML=`
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">💸</div>
+      <div class="empty-title">Awaiting Scan</div>
+      <div class="empty-sub">Add your expenses and hit detect</div>
+    </div>`;
+}
+</script>
+</body>
+</html>

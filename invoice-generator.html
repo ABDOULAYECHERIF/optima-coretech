@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INVOIX — Professional Invoice Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --ink: #0a0a0f;
+  --ink2: #111118;
+  --ink3: #1a1a24;
+  --ink4: #22222e;
+  --panel: rgba(255,255,255,0.035);
+  --panel2: rgba(255,255,255,0.06);
+  --gold: #c9a84c;
+  --gold2: #e8c96a;
+  --gold3: #f5e0a0;
+  --silver: #8892a4;
+  --silver2: #b0bac8;
+  --white: #f0ede8;
+  --accent: #4af0c4;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(201,168,76,0.3);
+  --r: 12px;
+  --r2: 20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Syne',sans-serif;
+  background:var(--ink);
+  color:var(--white);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ─── NOISE GRAIN ─── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:.35;
+}
+
+/* ─── BACKGROUND GLOW ─── */
+.bg-glow{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(201,168,76,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 80% 80%, rgba(74,240,196,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30,30,50,0.5) 0%, transparent 100%);
+}
+
+/* ─── LAYOUT ─── */
+.app{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-rows:auto 1fr;
+  min-height:100vh;
+}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px;
+  border-bottom:1px solid var(--border);
+  background:rgba(10,10,15,0.8);
+  backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:100;
+}
+.logo{
+  display:flex;align-items:center;gap:12px;
+  text-decoration:none;
+}
+.logo-mark{
+  width:38px;height:38px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;
+  font-weight:900;font-size:18px;color:var(--ink);
+}
+.logo-text{
+  font-family:'Syne',sans-serif;
+  font-weight:800;font-size:22px;
+  letter-spacing:3px;
+  background:linear-gradient(135deg,var(--gold),var(--gold3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.logo-sub{font-size:10px;color:var(--silver);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.tag-free{
+  background:linear-gradient(135deg,rgba(74,240,196,0.15),rgba(74,240,196,0.05));
+  border:1px solid rgba(74,240,196,0.3);
+  color:var(--accent);
+  padding:6px 14px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
+
+/* ─── MAIN ─── */
+.workspace{
+  display:grid;
+  grid-template-columns:480px 1fr;
+  gap:0;
+  min-height:calc(100vh - 79px);
+}
+
+/* ─── EDITOR PANEL ─── */
+.editor{
+  background:var(--ink2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:32px 28px 60px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--ink4) transparent;
+}
+.editor::-webkit-scrollbar{width:4px}
+.editor::-webkit-scrollbar-thumb{background:var(--ink4);border-radius:2px}
+
+.editor-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;
+  color:var(--white);margin-bottom:4px;
+}
+.editor-sub{font-size:12px;color:var(--silver);letter-spacing:1px;margin-bottom:32px;}
+
+/* ─── ACCORDION SECTION ─── */
+.section{
+  margin-bottom:12px;
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  transition:border-color .3s;
+}
+.section:hover{border-color:rgba(201,168,76,0.2);}
+.section.open{border-color:var(--border2);}
+
+.section-head{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+  cursor:pointer;
+  background:var(--panel);
+  transition:background .2s;
+  user-select:none;
+}
+.section-head:hover{background:var(--panel2);}
+.section-icon{
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--ink);
+}
+.section-label{font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--white);}
+.section-chevron{margin-left:auto;color:var(--silver);font-size:12px;transition:transform .3s;}
+.section.open .section-chevron{transform:rotate(180deg);}
+
+.section-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s cubic-bezier(0.4,0,0.2,1);
+  padding:0 20px;
+}
+.section.open .section-body{max-height:2000px;padding:20px;}
+
+/* ─── FORM FIELDS ─── */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.field label{
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--silver);
+}
+.field input,.field select,.field textarea{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--white);
+  padding:11px 14px;
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  transition:all .2s;
+  outline:none;
+  width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--gold);
+  background:rgba(201,168,76,0.06);
+  box-shadow:0 0 0 3px rgba(201,168,76,0.1);
+}
+.field select option{background:var(--ink2);color:var(--white);}
+.field textarea{resize:vertical;min-height:80px;}
+.field input::placeholder,.field textarea::placeholder{color:rgba(136,146,164,0.4);}
+
+/* ─── ITEMS TABLE ─── */
+.items-wrap{
+  border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;margin-bottom:12px;
+}
+.items-head{
+  display:grid;
+  grid-template-columns:2fr .6fr .9fr .6fr .8fr 40px;
+  gap:8px;padding:10px 12px;
+  background:rgba(201,168,76,0.1);
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--gold);
+}
+.item-row{
+  display:grid;
+  grid-template-columns:2fr .6fr .9fr .6fr .8fr 40px;
+  gap:8px;padding:10px 12px;
+  border-top:1px solid var(--border);
+  align-items:center;
+  transition:background .2s;
+}
+.item-row:hover{background:rgba(255,255,255,0.02);}
+.item-row input{
+  background:rgba(255,255,255,0.04);
+  border:1px solid transparent;
+  border-radius:6px;
+  color:var(--white);
+  padding:7px 8px;
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  width:100%;outline:none;transition:.2s;
+}
+.item-row input:focus{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+.item-total-cell{
+  font-family:'DM Mono',monospace;
+  font-size:12px;color:var(--gold2);
+  text-align:right;font-weight:500;
+}
+.btn-del{
+  width:32px;height:32px;border-radius:6px;
+  border:1px solid rgba(240,80,80,0.3);
+  background:rgba(240,80,80,0.08);
+  color:#f05050;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;transition:.2s;
+  flex-shrink:0;
+}
+.btn-del:hover{background:rgba(240,80,80,0.2);border-color:rgba(240,80,80,0.5);}
+
+.btn-add-item{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:8px;
+  border:1px dashed rgba(201,168,76,0.3);
+  background:transparent;color:var(--gold);
+  font-family:'Syne',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:1px;
+  cursor:pointer;transition:.2s;width:100%;
+  justify-content:center;
+}
+.btn-add-item:hover{background:rgba(201,168,76,0.08);border-color:var(--gold);}
+
+/* ─── COLORS/TEMPLATES ─── */
+.template-picker{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+}
+.tpl-card{
+  padding:12px 8px;
+  border:2px solid var(--border);
+  border-radius:8px;cursor:pointer;
+  transition:all .2s;text-align:center;
+  background:var(--panel);
+}
+.tpl-card:hover{border-color:rgba(255,255,255,0.2);transform:translateY(-2px);}
+.tpl-card.active{border-color:var(--gold);background:rgba(201,168,76,0.1);}
+.tpl-swatch{
+  width:28px;height:28px;border-radius:50%;
+  margin:0 auto 6px;
+}
+.tpl-name{font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--silver);}
+.tpl-card.active .tpl-name{color:var(--gold);}
+
+/* ─── EDITOR ACTIONS ─── */
+.editor-actions{
+  margin-top:20px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.btn-main{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 24px;border-radius:12px;
+  font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;
+  border:none;transition:all .3s;position:relative;overflow:hidden;
+}
+.btn-main::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transform:translateX(-100%);transition:.5s;
+}
+.btn-main:hover::after{transform:translateX(100%);}
+.btn-main:hover{transform:translateY(-2px);}
+
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--ink);
+  box-shadow:0 8px 30px rgba(201,168,76,0.3);
+}
+.btn-gold:hover{box-shadow:0 12px 40px rgba(201,168,76,0.5);}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--border2) !important;
+  color:var(--gold);
+}
+.btn-outline:hover{background:rgba(201,168,76,0.08);}
+.btn-ghost{
+  background:var(--panel);border:1px solid var(--border) !important;
+  color:var(--silver2);
+}
+
+/* ─── PREVIEW PANEL ─── */
+.preview-panel{
+  background:var(--ink3);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.preview-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 28px;
+  border-bottom:1px solid var(--border);
+  background:rgba(10,10,15,0.4);
+}
+.preview-topbar-left{display:flex;align-items:center;gap:12px;}
+.preview-dots{display:flex;gap:6px;}
+.dot{width:11px;height:11px;border-radius:50%;}
+.dot-r{background:#ff5f57;}.dot-y{background:#febc2e;}.dot-g{background:#28c840;}
+.preview-label{font-size:11px;color:var(--silver);letter-spacing:1px;text-transform:uppercase;}
+.preview-zoom{display:flex;align-items:center;gap:6px;}
+.zoom-btn{
+  width:28px;height:28px;border-radius:6px;
+  border:1px solid var(--border);background:var(--panel);
+  color:var(--silver2);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.zoom-btn:hover{border-color:var(--border2);color:var(--gold);}
+.zoom-val{font-family:'DM Mono',monospace;font-size:11px;color:var(--silver);min-width:34px;text-align:center;}
+
+.preview-canvas{
+  flex:1;overflow:auto;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:40px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(30,30,50,0.8) 0%, var(--ink3) 100%);
+}
+
+/* ─── INVOICE DOCUMENT ─── */
+#invoice-doc{
+  width:794px;
+  min-height:1123px;
+  background:white;
+  border-radius:4px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6);
+  position:relative;
+  transform-origin:top center;
+  transition:transform .2s;
+  overflow:hidden;
+  font-family:'Syne',sans-serif;
+  color:#1a1a2e;
+}
+
+/* ─── INVOICE THEMES ─── */
+/* OBSIDIAN (default) */
+.theme-obsidian .inv-header{
+  background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3a 60%,#0f0f20 100%);
+  color:white;
+}
+.theme-obsidian .inv-accent{color:#c9a84c;}
+.theme-obsidian .inv-table thead{background:linear-gradient(90deg,#0a0a1a,#1a1a3a);}
+.theme-obsidian .inv-total-bar{background:linear-gradient(135deg,#0a0a1a,#1a1a3a);}
+.theme-obsidian .inv-accent-line{background:linear-gradient(90deg,#c9a84c,#e8c96a,#c9a84c);}
+
+/* MIDNIGHT */
+.theme-midnight .inv-header{background:linear-gradient(135deg,#0d1b2a 0%,#1b3a5c 100%);color:white;}
+.theme-midnight .inv-accent{color:#4af0c4;}
+.theme-midnight .inv-table thead{background:linear-gradient(90deg,#0d1b2a,#1b3a5c);}
+.theme-midnight .inv-total-bar{background:linear-gradient(135deg,#0d1b2a,#1b3a5c);}
+.theme-midnight .inv-accent-line{background:linear-gradient(90deg,#4af0c4,#00d4aa,#4af0c4);}
+
+/* IVORY */
+.theme-ivory .inv-header{background:linear-gradient(135deg,#f5f0e8 0%,#ede5d4 100%);color:#1a1a2e;}
+.theme-ivory .inv-accent{color:#8b6914;}
+.theme-ivory .inv-table thead{background:linear-gradient(90deg,#1a1a2e,#2d2d4e);}
+.theme-ivory .inv-total-bar{background:linear-gradient(135deg,#1a1a2e,#2d2d4e);}
+.theme-ivory .inv-accent-line{background:linear-gradient(90deg,#c9a84c,#8b6914,#c9a84c);}
+
+/* CRIMSON */
+.theme-crimson .inv-header{background:linear-gradient(135deg,#1a0a0a 0%,#3d1515 100%);color:white;}
+.theme-crimson .inv-accent{color:#e86a6a;}
+.theme-crimson .inv-table thead{background:linear-gradient(90deg,#1a0a0a,#3d1515);}
+.theme-crimson .inv-total-bar{background:linear-gradient(135deg,#1a0a0a,#3d1515);}
+.theme-crimson .inv-accent-line{background:linear-gradient(90deg,#e86a6a,#ff9090,#e86a6a);}
+
+/* ─── INVOICE INTERNALS ─── */
+.inv-accent-line{
+  height:5px;width:100%;
+}
+.inv-header{
+  padding:48px 56px 40px;
+  position:relative;
+}
+.inv-header-grid{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:flex-start;gap:40px;
+}
+.inv-company-name{
+  font-family:'Playfair Display',serif;
+  font-size:32px;font-weight:900;
+  line-height:1;margin-bottom:8px;
+}
+.inv-company-details{
+  font-size:12px;opacity:.7;line-height:1.8;
+  font-family:'DM Mono',monospace;
+}
+.inv-title-block{text-align:right;}
+.inv-word{
+  font-family:'Playfair Display',serif;
+  font-size:56px;font-weight:900;
+  line-height:1;letter-spacing:-2px;
+  opacity:.15;text-transform:uppercase;
+}
+.inv-number{
+  font-family:'DM Mono',monospace;
+  font-size:14px;font-weight:500;
+  letter-spacing:2px;
+  margin-top:8px;opacity:.7;
+}
+.inv-body{padding:0 56px 48px;}
+.inv-meta{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:24px;padding:28px 0;
+  border-bottom:1px solid #eee;
+  margin-bottom:0;
+}
+.inv-meta-block{}
+.inv-meta-label{
+  font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#999;margin-bottom:6px;
+}
+.inv-meta-value{
+  font-size:13px;color:#1a1a2e;font-weight:600;
+  line-height:1.4;
+}
+.inv-meta-value.mono{font-family:'DM Mono',monospace;}
+.inv-meta-value.big{font-size:16px;}
+
+.inv-bill-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:24px;padding:28px 0;
+  border-bottom:1px solid #eee;
+}
+.inv-bill-label{
+  font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#999;margin-bottom:10px;
+}
+.inv-bill-name{font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:4px;}
+.inv-bill-detail{font-size:12px;color:#666;line-height:1.6;}
+
+/* ─── INVOICE TABLE ─── */
+.inv-table{
+  width:100%;margin:28px 0 0;
+  border-collapse:collapse;
+}
+.inv-table thead tr th{
+  padding:14px 16px;
+  color:white;
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;text-align:left;
+}
+.inv-table thead tr th:last-child{text-align:right;}
+.inv-table tbody tr{border-bottom:1px solid #f0f0f0;}
+.inv-table tbody tr:last-child{border-bottom:none;}
+.inv-table tbody td{
+  padding:16px;
+  font-size:13px;color:#1a1a2e;
+  vertical-align:middle;
+}
+.inv-table tbody td:last-child{text-align:right;font-family:'DM Mono',monospace;font-weight:600;}
+.inv-table tbody td.mono{font-family:'DM Mono',monospace;}
+.inv-table tbody tr:nth-child(even){background:rgba(0,0,0,0.02);}
+.inv-desc-main{font-weight:600;margin-bottom:2px;}
+.inv-desc-sub{font-size:11px;color:#999;}
+
+/* ─── TOTALS ─── */
+.inv-totals-section{
+  display:grid;grid-template-columns:1fr 280px;
+  gap:40px;margin-top:24px;padding-top:24px;
+}
+.inv-notes-area{
+  padding:20px;
+  border:1px solid #eee;border-radius:8px;
+  background:#fafafa;
+}
+.inv-notes-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#999;margin-bottom:8px;}
+.inv-notes-text{font-size:12px;color:#555;line-height:1.7;}
+.inv-totals-box{}
+.inv-total-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+}
+.inv-total-row:last-child{border-bottom:none;}
+.inv-total-label{font-size:12px;color:#666;font-weight:500;}
+.inv-total-val{font-family:'DM Mono',monospace;font-size:13px;color:#1a1a2e;font-weight:600;}
+.inv-total-bar{
+  border-radius:10px;
+  padding:16px 20px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:12px;
+}
+.inv-total-bar .lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);}
+.inv-total-bar .val{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:white;}
+
+/* ─── STATUS PILL ─── */
+.inv-status{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+}
+.inv-status.draft{background:#fff3cd;color:#856404;}
+.inv-status.pending{background:#f8d7da;color:#842029;}
+.inv-status.paid{background:#d1e7dd;color:#0f5132;}
+
+/* ─── INV FOOTER ─── */
+.inv-footer{
+  margin-top:40px;padding-top:20px;
+  border-top:1px solid #eee;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.inv-footer-left{font-size:10px;color:#bbb;}
+.inv-footer-right{font-family:'DM Mono',monospace;font-size:10px;color:#ccc;}
+
+/* ─── SCROLLBAR ─── */
+.preview-canvas::-webkit-scrollbar{width:6px;height:6px;}
+.preview-canvas::-webkit-scrollbar-thumb{background:var(--ink4);border-radius:3px;}
+
+/* ─── MOBILE ─── */
+@media(max-width:1100px){
+  .workspace{grid-template-columns:1fr;}
+  .preview-panel{display:none;}
+  .editor{padding:24px 20px 60px;}
+}
+
+/* ─── LOADING OVERLAY ─── */
+.loading-overlay{
+  position:fixed;inset:0;
+  background:rgba(10,10,15,0.9);
+  backdrop-filter:blur(10px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:10000;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+}
+.loading-overlay.show{opacity:1;pointer-events:all;}
+.loading-spinner{
+  width:60px;height:60px;
+  border:3px solid var(--border);
+  border-top-color:var(--gold);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin-bottom:20px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{
+  font-size:14px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;
+  background:linear-gradient(90deg,var(--gold),var(--gold3),var(--gold));
+  background-size:200%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 1.5s linear infinite;
+}
+@keyframes shimmer{to{background-position:200% center}}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Crafting your invoice...</div>
+</div>
+
+<div class="app">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a href="#" class="logo">
+      <div class="logo-mark">I</div>
+      <div>
+        <div class="logo-text">INVOIX</div>
+        <div class="logo-sub">Professional Invoice Studio</div>
+      </div>
+    </a>
+    <div class="topbar-right">
+      <div class="tag-free">✦ Free Forever</div>
+    </div>
+  </header>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+
+    <!-- ─── EDITOR ─── -->
+    <aside class="editor">
+      <h1 class="editor-title">Invoice Studio</h1>
+      <p class="editor-sub">Fill in the details — preview updates live</p>
+
+      <!-- DESIGN -->
+      <div class="section open" id="sec-design">
+        <div class="section-head" onclick="toggleSection('sec-design')">
+          <div class="section-icon">◈</div>
+          <span class="section-label">Design Theme</span>
+          <span class="section-chevron">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="template-picker">
+            <div class="tpl-card active" onclick="setTheme('obsidian',this)" title="Obsidian Gold">
+              <div class="tpl-swatch" style="background:linear-gradient(135deg,#0a0a1a,#c9a84c)"></div>
+              <div class="tpl-name">Obsidian</div>
+            </div>
+            <div class="tpl-card" onclick="setTheme('midnight',this)" title="Midnight Teal">
+              <div class="tpl-swatch" style="background:linear-gradient(135deg,#0d1b2a,#4af0c4)"></div>
+              <div class="tpl-name">Midnight</div>
+            </div>
+            <div class="tpl-card" onclick="setTheme('ivory',this)" title="Ivory Dark">
+              <div class="tpl-swatch" style="background:linear-gradient(135deg,#f5f0e8,#1a1a2e)"></div>
+              <div class="tpl-name">Ivory</div>
+            </div>
+            <div class="tpl-card" onclick="setTheme('crimson',this)" title="Crimson">
+              <div class="tpl-swatch" style="background:linear-gradient(135deg,#1a0a0a,#e86a6a)"></div>
+              <div class="tpl-name">Crimson</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- YOUR BUSINESS -->
+      <div class="section open" id="sec-from">
+        <div class="section-head" onclick="toggleSection('sec-from')">
+          <div class="section-icon">⬡</div>
+          <span class="section-label">Your Business</span>
+          <span class="section-chevron">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="row2">
+            <div class="field">
+              <label>Company Name</label>
+              <input type="text" id="f-company" value="OptimacoreTech" oninput="render()">
+            </div>
+            <div class="field">
+              <label>Tagline / Industry</label>
+              <input type="text" id="f-tagline" placeholder="Digital Solutions" oninput="render()">
+            </div>
+          </div>
+          <div class="field">
+            <label>Address</label>
+            <input type="text" id="f-address" value="2060 Antwerp, Belgium" oninput="render()">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Phone</label>
+              <input type="tel" id="f-phone" value="+32 465 856 075" oninput="render()">
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" id="f-email" value="hello@optimacoretech.com" oninput="render()">
+            </div>
+          </div>
+          <div class="field">
+            <label>Website</label>
+            <input type="text" id="f-website" placeholder="www.yoursite.com" oninput="render()">
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENT -->
+      <div class="section open" id="sec-to">
+        <div class="section-head" onclick="toggleSection('sec-to')">
+          <div class="section-icon">◎</div>
+          <span class="section-label">Client Details</span>
+          <span class="section-chevron">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="row2">
+            <div class="field">
+              <label>Client / Contact Name</label>
+              <input type="text" id="c-name" placeholder="Jane Smith" oninput="render()">
+            </div>
+            <div class="field">
+              <label>Company</label>
+              <input type="text" id="c-company" placeholder="Acme Corp" oninput="render()">
+            </div>
+          </div>
+          <div class="field">
+            <label>Address</label>
+            <input type="text" id="c-address" placeholder="123 Main St, City, Country" oninput="render()">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Email</label>
+              <input type="email" id="c-email" placeholder="client@email.com" oninput="render()">
+            </div>
+            <div class="field">
+              <label>VAT / Tax ID</label>
+              <input type="text" id="c-vat" placeholder="BE0123456789" oninput="render()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVOICE DETAILS -->
+      <div class="section open" id="sec-details">
+        <div class="section-head" onclick="toggleSection('sec-details')">
+          <div class="section-icon">≡</div>
+          <span class="section-label">Invoice Details</span>
+          <span class="section-chevron">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="row3">
+            <div class="field">
+              <label>Invoice #</label>
+              <input type="text" id="d-number" value="INV-2024-001" oninput="render()">
+            </div>
+            <div class="field">
+              <label>Date</label>
+              <input type="date" id="d-date" oninput="render()">
+            </div>
+            <div class="field">
+              <label>Due Date</label>
+              <input type="date" id="d-due" oninput="render()">
+            </div>
+          </div>
+          <div class="row3">
+            <div class="field">
+              <label>Currency</label>
+              <select id="d-currency" onchange="render()">
+                <option value="EUR" data-sym="€">EUR — Euro</option>
+                <option value="USD" data-sym="$">USD — Dollar</option>
+                <option value="GBP" data-sym="£">GBP — Pound</option>
+                <option value="CHF" data-sym="CHF">CHF — Franc</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="d-status" onchange="render()">
+                <option value="draft">Draft</option>
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>PO Number</label>
+              <input type="text" id="d-po" placeholder="PO-2024-001" oninput="render()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEMS -->
+      <div class="section open" id="sec-items">
+        <div class="section-head" onclick="toggleSection('sec-items')">
+          <div class="section-icon">⊞</div>
+          <span class="section-label">Line Items</span>
+          <span class="section-chevron">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="items-wrap">
+            <div class="items-head">
+              <span>Description</span>
+              <span>Qty</span>
+              <span>Unit Price</span>
+              <span>Tax %</span>
+              <span style="text-align:right">Total</span>
+              <span></span>
+            </div>
+            <div id="items-container"></div>
+          </div>
+          <button class="btn-add-item" onclick="addItem()">
+            + Add Line Item
+          </button>
+        </div>
+      </div>
+
+      <!-- PAYMENT & NOTES -->
+      <div class="section" id="sec-notes">
+        <div class="section-head" onclick="toggleSection('sec-notes')">
+          <div class="section-icon">✦</div>
+          <span class="section-label">Notes & Payment</span>
+          <span class="section-chevron">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="field">
+            <label>Payment Terms</label>
+            <input type="text" id="n-terms" value="Payment due within 30 days of invoice date." oninput="render()">
+          </div>
+          <div class="field">
+            <label>Bank / Payment Details</label>
+            <input type="text" id="n-bank" placeholder="IBAN: BE12 3456 7890 1234" oninput="render()">
+          </div>
+          <div class="field">
+            <label>Additional Notes</label>
+            <textarea id="n-notes" placeholder="Thank you for your business. We appreciate the opportunity to work with you." oninput="render()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="editor-actions">
+        <button class="btn-main btn-gold" onclick="downloadPDF()">
+          <span>⬇</span> Download PDF
+        </button>
+        <button class="btn-main btn-outline" onclick="printInvoice()">
+          <span>⎙</span> Print Invoice
+        </button>
+        <button class="btn-main btn-ghost" onclick="resetForm()">
+          <span>↺</span> Reset Form
+        </button>
+      </div>
+    </aside>
+
+    <!-- ─── PREVIEW ─── -->
+    <main class="preview-panel">
+      <div class="preview-topbar">
+        <div class="preview-topbar-left">
+          <div class="preview-dots">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+          </div>
+          <span class="preview-label">Live Preview — A4 Document</span>
+        </div>
+        <div class="preview-zoom">
+          <button class="zoom-btn" onclick="zoom(-10)">−</button>
+          <span class="zoom-val" id="zoom-val">85%</span>
+          <button class="zoom-btn" onclick="zoom(+10)">+</button>
+        </div>
+      </div>
+      <div class="preview-canvas" id="preview-canvas">
+        <!-- Invoice Document -->
+        <div id="invoice-doc" class="theme-obsidian">
+          <!-- Built by render() -->
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────
+let currentTheme = 'obsidian';
+let zoomLevel = 85;
+let items = [];
+let itemId = 0;
+
+const syms = {EUR:'€', USD:'$', GBP:'£', CHF:'CHF '};
+
+// ─── INIT ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const today = new Date();
+  const due = new Date(today);
+  due.setDate(due.getDate() + 30);
+  document.getElementById('d-date').value = fmt(today);
+  document.getElementById('d-due').value = fmt(due);
+  addItem('Web Development — Homepage Redesign', 1, 1800, 21);
+  addItem('UI/UX Design & Prototyping', 3, 450, 21);
+  addItem('SEO Optimization Package', 1, 600, 21);
+  render();
+  applyZoom();
+});
+
+function fmt(d){return d.toISOString().split('T')[0];}
+function fmtDate(str){
+  if(!str) return '—';
+  const d = new Date(str+'T00:00:00');
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+}
+
+// ─── SECTIONS ─────────────────────────────────────────────────
+function toggleSection(id){
+  const sec = document.getElementById(id);
+  sec.classList.toggle('open');
+}
+
+// ─── THEME ────────────────────────────────────────────────────
+function setTheme(theme, card){
+  currentTheme = theme;
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
+  card.classList.add('active');
+  render();
+}
+
+// ─── ZOOM ─────────────────────────────────────────────────────
+function zoom(delta){
+  zoomLevel = Math.max(40, Math.min(130, zoomLevel + delta));
+  document.getElementById('zoom-val').textContent = zoomLevel + '%';
+  applyZoom();
+}
+function applyZoom(){
+  document.getElementById('invoice-doc').style.transform = `scale(${zoomLevel/100})`;
+  const doc = document.getElementById('invoice-doc');
+  const canvas = document.getElementById('preview-canvas');
+  const scaled = 794 * (zoomLevel/100);
+  const scaledH = doc.offsetHeight * (zoomLevel/100);
+  doc.style.marginBottom = (scaledH - doc.offsetHeight) + 'px';
+}
+
+// ─── ITEMS ────────────────────────────────────────────────────
+function addItem(desc='', qty=1, price=0, tax=21){
+  const id = ++itemId;
+  items.push({id, desc, qty, price, tax});
+
+  const container = document.getElementById('items-container');
+  const row = document.createElement('div');
+  row.className = 'item-row';
+  row.id = 'item-row-'+id;
+  row.innerHTML = `
+    <input type="text" value="${desc}" placeholder="Service or product…" oninput="updateItem(${id},'desc',this.value)">
+    <input type="number" value="${qty}" min="0.01" step="any" style="text-align:center" oninput="updateItem(${id},'qty',this.value)">
+    <input type="number" value="${price}" min="0" step="any" oninput="updateItem(${id},'price',this.value)">
+    <input type="number" value="${tax}" min="0" max="100" step="any" style="text-align:center" oninput="updateItem(${id},'tax',this.value)">
+    <div class="item-total-cell" id="item-tot-${id}">—</div>
+    <button class="btn-del" onclick="removeItem(${id})" title="Remove">✕</button>
+  `;
+  container.appendChild(row);
+  render();
+}
+
+function updateItem(id, key, val){
+  const item = items.find(i=>i.id===id);
+  if(!item) return;
+  if(key==='qty'||key==='price'||key==='tax') item[key]=parseFloat(val)||0;
+  else item[key]=val;
+  render();
+}
+
+function removeItem(id){
+  if(items.length <= 1){alert('At least one item required.'); return;}
+  items = items.filter(i=>i.id!==id);
+  document.getElementById('item-row-'+id)?.remove();
+  render();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────
+function render(){
+  const g = id => document.getElementById(id)?.value || '';
+  const sym = syms[g('d-currency')] || '€';
+
+  // Calculate
+  let subtotal = 0, totalTax = 0;
+  items.forEach(item => {
+    const base = item.qty * item.price;
+    const tax = base * (item.tax/100);
+    subtotal += base;
+    totalTax += tax;
+    const tot = base + tax;
+    const el = document.getElementById('item-tot-'+item.id);
+    if(el) el.textContent = sym + tot.toFixed(2);
+  });
+  const total = subtotal + totalTax;
+
+  const status = g('d-status');
+  const statusClass = {draft:'draft',pending:'pending',paid:'paid'}[status]||'draft';
+  const statusLabel = status.charAt(0).toUpperCase()+status.slice(1);
+
+  // Build items rows HTML
+  const rowsHTML = items.map(item => {
+    const base = item.qty * item.price;
+    const tax = base*(item.tax/100);
+    const tot = base+tax;
+    return `
+      <tr>
+        <td><div class="inv-desc-main">${item.desc||'—'}</div></td>
+        <td class="mono">${item.qty}</td>
+        <td class="mono">${sym}${parseFloat(item.price).toFixed(2)}</td>
+        <td class="mono">${item.tax}%</td>
+        <td>${sym}${tot.toFixed(2)}</td>
+      </tr>`;
+  }).join('');
+
+  const notes = g('n-notes');
+  const terms = g('n-terms');
+  const bank = g('n-bank');
+  const po = g('d-po');
+  const website = g('f-website');
+
+  const doc = document.getElementById('invoice-doc');
+  doc.className = `theme-${currentTheme}`;
+
+  doc.innerHTML = `
+    <div class="inv-accent-line"></div>
+
+    <div class="inv-header">
+      <div class="inv-header-grid">
+        <div>
+          <div class="inv-company-name">${g('f-company')||'Company Name'}</div>
+          <div class="inv-company-details">
+            ${g('f-address')||''}${g('f-address')?'<br>':''}
+            ${g('f-phone')||''}${g('f-phone')?' &nbsp;·&nbsp; ':''}${g('f-email')||''}
+            ${website?'<br>'+website:''}
+          </div>
+        </div>
+        <div class="inv-title-block">
+          <div class="inv-word">Invoice</div>
+          <div class="inv-number">${g('d-number')||'INV-0001'}</div>
+          <div style="margin-top:10px">
+            <span class="inv-status ${statusClass}">${statusLabel}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-body">
+      <div class="inv-meta">
+        <div class="inv-meta-block">
+          <div class="inv-meta-label">Invoice Date</div>
+          <div class="inv-meta-value mono">${fmtDate(g('d-date'))}</div>
+        </div>
+        <div class="inv-meta-block">
+          <div class="inv-meta-label">Due Date</div>
+          <div class="inv-meta-value mono">${fmtDate(g('d-due'))}</div>
+        </div>
+        <div class="inv-meta-block">
+          ${po?`<div class="inv-meta-label">PO Number</div><div class="inv-meta-value mono">${po}</div>`:''}
+        </div>
+      </div>
+
+      <div class="inv-bill-grid">
+        <div>
+          <div class="inv-bill-label">From</div>
+          <div class="inv-bill-name">${g('f-company')||'Your Company'}</div>
+          <div class="inv-bill-detail">
+            ${g('f-address')||''}<br>
+            ${g('f-phone')||''}<br>
+            ${g('f-email')||''}
+          </div>
+        </div>
+        <div>
+          <div class="inv-bill-label">Bill To</div>
+          <div class="inv-bill-name">${g('c-company')||g('c-name')||'Client Company'}</div>
+          <div class="inv-bill-detail">
+            ${g('c-name')?'Attn: '+g('c-name')+'<br>':''}
+            ${g('c-address')||''}<br>
+            ${g('c-email')||''}
+            ${g('c-vat')?'<br>VAT: '+g('c-vat'):''}
+          </div>
+        </div>
+      </div>
+
+      <table class="inv-table">
+        <thead>
+          <tr>
+            <th style="width:42%">Description</th>
+            <th style="width:8%">Qty</th>
+            <th style="width:14%">Unit Price</th>
+            <th style="width:10%">Tax</th>
+            <th style="width:14%;text-align:right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHTML}</tbody>
+      </table>
+
+      <div class="inv-totals-section">
+        <div>
+          ${(notes||terms||bank)?`
+          <div class="inv-notes-area">
+            ${notes?`<div class="inv-notes-label">Notes</div><div class="inv-notes-text">${notes}</div>`:''}
+            ${terms?`<div class="inv-notes-label" style="margin-top:12px">Payment Terms</div><div class="inv-notes-text">${terms}</div>`:''}
+            ${bank?`<div class="inv-notes-label" style="margin-top:12px">Payment Details</div><div class="inv-notes-text">${bank}</div>`:''}
+          </div>`:'<div></div>'}
+        </div>
+        <div class="inv-totals-box">
+          <div class="inv-total-row">
+            <span class="inv-total-label">Subtotal</span>
+            <span class="inv-total-val">${sym}${subtotal.toFixed(2)}</span>
+          </div>
+          <div class="inv-total-row">
+            <span class="inv-total-label">Tax</span>
+            <span class="inv-total-val">${sym}${totalTax.toFixed(2)}</span>
+          </div>
+          <div class="inv-total-bar">
+            <span class="lbl">Total Due</span>
+            <span class="val">${sym}${total.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="inv-footer">
+        <div class="inv-footer-left">
+          ${g('f-company')||'Company'} &nbsp;·&nbsp; Generated with INVOIX
+        </div>
+        <div class="inv-footer-right">${g('d-number')||'INV-0001'} &nbsp;·&nbsp; Page 1 of 1</div>
+      </div>
+    </div>
+  `;
+
+  setTimeout(applyZoom, 10);
+}
+
+// ─── PDF ──────────────────────────────────────────────────────
+async function downloadPDF(){
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('show');
+
+  const doc = document.getElementById('invoice-doc');
+  const prevTransform = doc.style.transform;
+  const prevMargin = doc.style.marginBottom;
+
+  doc.style.transform = 'scale(1)';
+  doc.style.marginBottom = '0';
+
+  try {
+    await new Promise(r => setTimeout(r, 200));
+    const canvas = await html2canvas(doc, {
+      scale: 2.5,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: 794,
+      onclone: cloned => {
+        const d = cloned.getElementById('invoice-doc');
+        d.style.transform = 'scale(1)';
+        d.style.boxShadow = 'none';
+      }
+    });
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const pdfW = pdf.internal.pageSize.getWidth();
+    const pdfH = pdf.internal.pageSize.getHeight();
+    const ratio = canvas.height / canvas.width;
+    const imgH = pdfW * ratio;
+
+    if(imgH <= pdfH){
+      pdf.addImage(canvas.toDataURL('image/png',1.0), 'PNG', 0, 0, pdfW, imgH);
+    } else {
+      let y = 0;
+      const pageH = Math.floor(canvas.width * (pdfH/pdfW));
+      while(y < canvas.height){
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(pageH, canvas.height - y);
+        pageCanvas.getContext('2d').drawImage(canvas, 0, y, canvas.width, pageCanvas.height, 0, 0, canvas.width, pageCanvas.height);
+        if(y > 0) pdf.addPage();
+        pdf.addImage(pageCanvas.toDataURL('image/png',1.0),'PNG',0,0,pdfW,pdfW*(pageCanvas.height/canvas.width));
+        y += pageH;
+      }
+    }
+
+    const company = (document.getElementById('f-company')?.value||'Invoice').replace(/\s+/g,'_');
+    const num = (document.getElementById('d-number')?.value||'INV').replace(/\s+/g,'_');
+    pdf.save(`${company}_${num}.pdf`);
+  } catch(e){
+    alert('PDF generation failed. Please try again.');
+    console.error(e);
+  }
+
+  doc.style.transform = prevTransform;
+  doc.style.marginBottom = prevMargin;
+  overlay.classList.remove('show');
+}
+
+function printInvoice(){
+  const doc = document.getElementById('invoice-doc');
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Syne',sans-serif;}</style>
+    <style>${[...document.styleSheets].map(s=>{try{return [...s.cssRules].map(r=>r.cssText).join('\n')}catch{return ''}}).join('\n')}</style>
+  </head><body>${doc.outerHTML}</body></html>`);
+  win.document.close();
+  setTimeout(()=>{win.print();win.close();},600);
+}
+
+function resetForm(){
+  if(!confirm('Reset all fields? This cannot be undone.')) return;
+  ['f-company','f-tagline','f-address','f-phone','f-email','f-website',
+   'c-name','c-company','c-address','c-email','c-vat',
+   'n-terms','n-bank','n-notes','d-po'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value = id==='f-company'?'OptimacoreTech':id==='n-terms'?'Payment due within 30 days.':'';
+  });
+  document.getElementById('d-number').value='INV-2024-001';
+  document.getElementById('d-currency').value='EUR';
+  document.getElementById('d-status').value='draft';
+  const today=new Date(); const due=new Date(today); due.setDate(due.getDate()+30);
+  document.getElementById('d-date').value=fmt(today);
+  document.getElementById('d-due').value=fmt(due);
+  items=[]; itemId=0;
+  document.getElementById('items-container').innerHTML='';
+  addItem('Web Development Service',1,1500,21);
+  render();
+}
+</script>
+</body>
+</html>
