@@ -922,13 +922,14 @@ Chatbot -->
     <!--=================================
     Main Banner -->
     <div class="main-banner main-banner-1">
+      <div class="hero-field" aria-hidden="true"></div>
       <div class="banner-inner">
         <img class="img-fluid banner-bg-one" src="images/banner/banner-01/banner-bg-01.png" alt="">
         <div class="banner-title h1" aria-hidden="true">OC TECH</div>
         <div class="container">
           <div class="row">
             <div class="col-md-6">
-              <img class="img-fluid rotate rotate-img" src="images/banner/banner-01/banner-shape-01.png" alt="">
+              <img class="img-fluid rotate-img hero-growth" src="images/banner/banner-01/growth-chart.webp" width="851" height="530" alt="Business growth chart: websites, apps and AI agents that grow your business">
             </div>
             <div class="col-md-6 ms-auto">
               <div class="banner-content">
@@ -1844,6 +1845,20 @@ Javascript -->
 <script src="js/attractHover.js"></script>
 <script src="js/lenis.min.js"></script>
 <script src="js/custom.js"></script> <!-- Template Scripts (Do not remove)-->
+<script src="js/ring-field.js"></script>
+<script>
+  // Interactive particle ring behind the hero (follows the cursor on desktop)
+  (function () {
+    var host = document.querySelector(".main-banner-1 .hero-field");
+    if (!host || !window.RingField) return;
+    window.RingField.mount(host, {
+      colors: ["#36465F", "#706E41"],
+      density: 300,
+      // portrait screens: pull the camera back so the ring frames the hero like on desktop
+      cameraDistance: Math.max(160, Math.round(160 * 1.6 / Math.max(host.clientWidth / Math.max(host.clientHeight, 1), 0.2)))
+    });
+  })();
+</script>
 
 <!--=================================
    Javascript -->
