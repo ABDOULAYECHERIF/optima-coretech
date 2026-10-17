@@ -586,3 +586,20 @@
     .message {
       animation: messageSlideIn 0.3s ease forwards;
     }
+
+    /* Readable in both site themes: the Orisa theme sets light text in dark mode,
+       so the chat sets its own colours instead of inheriting them. */
+    .chatbot-window { color: #1d1d1f; }
+    .bot-message, .typing-indicator { color: #1d1d1f; }
+    .chatbot-input { background: #fff; color: #1d1d1f; }
+    .chatbot-input::placeholder { color: #8a8a93; }
+
+    [data-bs-theme=dark] .chatbot-window { background: #151518; color: #ececf1; border: 1px solid rgba(255,255,255,.08); }
+    [data-bs-theme=dark] .chatbot-body { background: #0f0f12; }
+    [data-bs-theme=dark] .bot-message,
+    [data-bs-theme=dark] .typing-indicator { background: #222228; color: #ececf1; border-color: rgba(255,255,255,.08); box-shadow: none; }
+    [data-bs-theme=dark] .message-time { color: inherit; }
+    [data-bs-theme=dark] .option-button { background: rgba(110,142,251,.16); border-color: rgba(110,142,251,.45); color: #b9c6ff; }
+    [data-bs-theme=dark] .chatbot-input-area { background: #151518; border-top-color: rgba(255,255,255,.08); }
+    [data-bs-theme=dark] .chatbot-input { background: #222228; color: #ececf1; border-color: rgba(255,255,255,.12); }
+    [data-bs-theme=dark] .chatbot-input::placeholder { color: #9a9aa5; }

@@ -1,0 +1,48 @@
+# OptimaCoreTech
+
+> OptimaCoreTech is a web design, app development and AI agent studio based in Antwerp, Belgium. It builds fast, SEO-ready websites, iOS and Android apps, and AI agents that answer customers, take bookings and capture leads 24/7 for businesses across Belgium. More than 50 businesses have worked with OptimaCoreTech. Every project is quoted individually after a free call.
+
+OptimaCoreTech (also written Optima CoreTech, Optima Core Tech, OptimaCore Tech) is based in Antwerp (2060), Belgium, and works with businesses across Belgium. Contact: +32 465 856 075, optimacoretech@outlook.com, Monday to Friday 8:30-18:30. Every project is quoted individually after a free call; there are no fixed packages.
+
+## Services
+- [Web design and development](https://www.optimacoretech.com/web-design-antwerp.html): Custom, mobile-first websites, online shops, booking sites and redesigns that load fast and are built to rank on Google.
+- [Mobile app development](https://www.optimacoretech.com/app-development.html): iOS and Android apps for bookings, loyalty, ordering and internal tools, plus the web dashboards behind them.
+- [AI agents and AI receptionists](https://www.optimacoretech.com/ai-agents.html): AI agents for websites, WhatsApp and phone that answer questions, take bookings and orders and pass leads to the team, 24/7.
+- [Process automation](https://www.optimacoretech.com/service.html): Connecting business tools, syncing data and automating repetitive work.
+- [Cloud solutions](https://www.optimacoretech.com/service.html): Managing and synchronising data across platforms securely.
+- [IT consulting and cybersecurity](https://www.optimacoretech.com/service.html): Advice on IT setup and protection against online threats.
+- [Search engine optimisation](https://www.optimacoretech.com/web-design-antwerp.html): Technical SEO, structured data and Google Search Console setup on every site.
+
+## Key pages
+- [Home](https://www.optimacoretech.com/): OptimaCoreTech is an Antwerp studio building fast websites, mobile apps and 24/7 AI agents for businesses across Belgium. 50+ clients. Get a free quote.
+- [About](https://www.optimacoretech.com/about-us.html): Meet OptimaCoreTech, the Antwerp team behind 50+ websites, apps and AI agents for Belgian businesses. Our story, our approach and how we work.
+- [Services](https://www.optimacoretech.com/service.html): Website design, mobile app development, AI agents and ongoing care for businesses in Antwerp and across Belgium. See what OptimaCoreTech can build for you.
+- [Web design in Antwerp](https://www.optimacoretech.com/web-design-antwerp.html): Professional web design in Antwerp. OptimaCoreTech builds fast, mobile-friendly websites that rank on Google and turn visitors into customers. Free quote.
+- [Mobile app development](https://www.optimacoretech.com/app-development.html): Mobile app development in Belgium. OptimaCoreTech designs and builds iOS and Android apps for bookings, loyalty, ordering and internal tools. Get a free quote.
+- [AI agents](https://www.optimacoretech.com/ai-agents.html): AI agents that answer your customers 24/7, take bookings and orders, and capture leads on your website, WhatsApp or phone. Built in Antwerp by OptimaCoreTech.
+- [FAQ](https://www.optimacoretech.com/faq.html): Answers to common questions about working with OptimaCoreTech: timelines, pricing, maintenance, hosting, SEO, multilingual sites and AI agents.
+- [Contact](https://www.optimacoretech.com/contact-us.html): Tell us about your website, app or AI project. OptimaCoreTech in Antwerp will get back to you with ideas and a tailored, no-obligation quote.
+- [Blog](https://www.optimacoretech.com/blog/): Practical guides on websites, mobile apps, AI agents and getting found on Google, written by the OptimaCoreTech team in Antwerp.
+
+## Guides
+- [AI Chatbot vs AI Agent: What's the Difference? (Business Guide)](https://www.optimacoretech.com/blog/ai-chatbot-vs-ai-agent.html): AI chatbot or AI agent? A plain-English guide to the difference, what each can do for a small business, examples, and how to decide which one you need.
+- [AI Receptionist for Small Business: How It Works (2026)](https://www.optimacoretech.com/blog/ai-receptionist-for-small-business.html): How an AI receptionist answers calls and messages 24/7, takes bookings and captures leads for small businesses, what it costs to run, and when it makes sense.
+- [App vs Website: Which Does Your Business Need? (2026)](https://www.optimacoretech.com/blog/app-or-website-which-does-my-business-need.html): Should you build a mobile app or a website? A clear comparison of cost, reach, features and use cases to help you decide what your business needs first.
+- [Do I Need a Website if I Have Facebook? Honest Answer (2026)](https://www.optimacoretech.com/blog/do-i-need-a-website-if-i-have-facebook.html): Is a Facebook or Instagram page enough for your business? Why social media alone loses you customers, and what a website does that social profiles can't.
+- [How Much Does a Website Cost in Belgium? (2026 Guide)](https://www.optimacoretech.com/blog/how-much-does-a-website-cost-in-belgium.html): What a website really costs in Belgium in 2026: typical price ranges for business sites, online shops and custom builds, what drives the price, and the hidden costs to plan for.
+- [How to Choose a Web Design Agency in Antwerp: 12-Point Checklist](https://www.optimacoretech.com/blog/how-to-choose-a-web-design-agency-in-antwerp.html): A practical checklist for choosing a web design agency in Antwerp: what to ask, what a good quote contains, red flags, and how to compare agencies before you sign.
+- [Restaurant Website: 10 Things Every Restaurant Site Needs (2026)](https://www.optimacoretech.com/blog/restaurant-website-what-to-include.html): What should a restaurant website include? Menu, online reservations, opening hours, Google Maps, reviews and more: a practical checklist for restaurant owners.
+- [7 Signs Your Website Is Losing You Customers (And How to Fix It)](https://www.optimacoretech.com/blog/signs-your-website-is-losing-customers.html): Slow loading, no mobile layout, no clear call to action: seven warning signs your business website is costing you customers, and how to fix each one.
+- [Website Redesign Without Losing Google Rankings: SEO Checklist](https://www.optimacoretech.com/blog/website-redesign-without-losing-google-rankings.html): Redesigning your website? Keep your Google rankings with this SEO checklist: URLs, redirects, content, metadata, structured data, speed and what to check after launch.
+
+## Team
+- Cherif Abdoulaye, CEO & Front-End Developer
+- Isabella Reed, Lead Developer
+- Sophia Williams, UI/UX Designer
+
+## Optional
+- [Full site text for AI assistants](https://www.optimacoretech.com/llms-full.txt)
+- [Sitemap](https://www.optimacoretech.com/sitemap.xml)
+- [Google Business Profile](https://share.google/MWxQavhAFxBxLwRSp)
+- https://www.linkedin.com/company/optima-coretech/
+- https://www.instagram.com/optima_coretech

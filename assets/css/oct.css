@@ -74,6 +74,14 @@ img.oct-logo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
 .about-me-slider-thumb img { aspect-ratio: 770 / 560; object-fit: cover; }
 .at-service-img-wrapper .hover-image img, .at-service-item .thumb img { object-fit: cover; }
 
+/* About: fact sheet */
+.oct-facts__row { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--at-neutral-100); }
+.oct-facts__row:first-child { border-top: 1px solid var(--at-neutral-100); }
+.oct-facts dt { font-weight: 600; color: var(--at-neutral-500); text-transform: uppercase; font-size: 13px; letter-spacing: .06em; padding-top: 3px; }
+.oct-facts dd { margin: 0; font-size: 18px; color: var(--at-neutral-900); }
+.oct-facts dd a { color: var(--at-theme-primary); }
+@media (max-width: 575px) { .oct-facts__row { grid-template-columns: 1fr; gap: 4px; } }
+
 /* the 4 hero / footer links were divs in the template */
 a.at-btn.w-100, .at-footer-copyright-area a.at-btn { text-decoration: none; }
 
