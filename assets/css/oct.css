@@ -1,0 +1,72 @@
+/* OptimaCoreTech additions on top of the Orisa template (main.css stays untouched) */
+
+/* logo: our round mark on its own; the template inverts logos in dark mode, ours keeps its colours */
+img.oct-logo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; filter: none !important; }
+@media (max-width: 767px) { img.oct-logo { width: 40px; height: 40px; } }
+
+/* hero name on one line, a little smaller than the template's 220px */
+.sec-1-home-4-wrap .sec-1-home-4__brand { white-space: nowrap; font-size: clamp(34px, 10.2vw, 190px); }
+/* footer name scaled the same way so it never overflows */
+.footer-4-connect-title { font-size: clamp(34px, 10.2vw, 190px) !important; }
+
+/* FAQ, styled like the template's bordered rows */
+.oct-faq-item { border-top: 1px solid var(--at-neutral-100); }
+.oct-faq-item:last-child { border-bottom: 1px solid var(--at-neutral-100); }
+.oct-faq-item summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 26px 0; font-size: 20px; font-weight: 600; color: var(--at-neutral-900); transition: color .2s;
+}
+.oct-faq-item summary::-webkit-details-marker { display: none; }
+.oct-faq-item summary:hover, .oct-faq-item[open] summary { color: var(--at-theme-primary); }
+.oct-faq-item summary:focus-visible { outline: 2px solid var(--at-theme-primary); outline-offset: 4px; }
+.oct-faq-icon {
+  flex: 0 0 40px; height: 40px; border-radius: 50%; border: 1px solid var(--at-neutral-200);
+  display: grid; place-items: center; font-size: 22px; font-weight: 400; transition: transform .25s, background .25s, color .25s;
+}
+.oct-faq-item[open] .oct-faq-icon { transform: rotate(45deg); background: var(--at-theme-primary); border-color: var(--at-theme-primary); color: #fff; }
+.oct-faq-item p { margin: -6px 0 26px; max-width: 720px; color: var(--at-neutral-900); opacity: .75; font-size: 17px; line-height: 1.65; }
+@media (max-width: 767px) { .oct-faq-item summary { font-size: 17px; padding: 20px 0; } }
+
+
+/* ---------- inner pages ---------- */
+[data-bs-theme=dark] .at-faq-body p { color: #c4c4c4; }
+.oct-inner .nav-menu a { text-decoration: none; }
+.oct-inner .nav-menu a:hover { color: var(--at-theme-primary) !important; }
+
+/* long-form text (service pages and blog posts) in the template's blog-details rhythm */
+.oct-prose { font-size: 18px; line-height: 1.7; color: var(--at-neutral-900); }
+.oct-prose > p, .oct-prose li { font-size: 18px; line-height: 1.7; }
+.oct-prose > p:first-child { font-size: 22px; line-height: 1.55; margin-bottom: 40px; }
+.oct-prose h2 { font-size: clamp(26px, 3vw, 34px); font-weight: 600; line-height: 1.2; margin: 56px 0 18px; }
+.oct-prose h3:not(.at-faq-heading) { font-size: 22px; font-weight: 600; margin: 36px 0 12px; }
+.oct-prose ul, .oct-prose ol { padding-left: 1.25em; margin: 0 0 24px; }
+.oct-prose li { margin-bottom: 10px; }
+.oct-prose li::marker { color: var(--at-theme-primary); }
+.oct-prose a:not(.at-btn):not(.d-inline-flex) { color: var(--at-theme-primary); text-decoration: underline; text-underline-offset: 3px; }
+.oct-prose table { width: 100%; border-collapse: collapse; margin: 24px 0 32px; font-size: 16px; }
+.oct-prose th, .oct-prose td { border: 1px solid var(--at-neutral-100); padding: 12px 14px; text-align: left; vertical-align: top; }
+.oct-prose th { background: var(--at-neutral-50); font-weight: 600; }
+.oct-prose .accordion { margin-top: 24px; }
+.oct-prose .at-faq-item { margin-bottom: 12px; }
+.oct-prose nav p.h6 a { color: var(--at-neutral-900); text-decoration: none; }
+.at-faq-heading { font-size: inherit; font-weight: inherit; line-height: inherit; }
+.oct-post-hero { aspect-ratio: 16 / 7; object-fit: cover; }
+.oct-feature-img { aspect-ratio: 16 / 10; object-fit: cover; }
+.blog-card__img22 { aspect-ratio: 408 / 360; object-fit: cover; width: 100%; }
+.oct-inner .at-faq-item[hidden] { display: none !important; }
+@media (max-width: 767px) {
+  .oct-prose, .oct-prose > p, .oct-prose li { font-size: 17px; }
+  .oct-prose > p:first-child { font-size: 19px; }
+  .oct-post-hero { aspect-ratio: 4 / 3; }
+}
+
+/* free tool row: let the longer description wrap on phones */
+@media (max-width: 767px) {
+  .card-award .card-award-web-excellence { white-space: normal !important; width: auto !important; max-width: 100%; }
+}
+
+/* the 4 hero / footer links were divs in the template */
+a.at-btn.w-100, .at-footer-copyright-area a.at-btn { text-decoration: none; }
+
+/* chatbot sits above the template's back-to-top button */
+@media (prefers-reduced-motion: reduce) { .oct-faq-icon { transition: none; } }
