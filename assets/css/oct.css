@@ -65,6 +65,15 @@ img.oct-logo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
   .card-award .card-award-web-excellence { white-space: normal !important; width: auto !important; max-width: 100%; }
 }
 
+/* service card images (light mockup behind white text gets a shade; the AI image is split over two slots) */
+.oct-card-shade::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.05) 20%, rgba(0,0,0,.8) 100%); pointer-events: none; z-index: 1; }
+.oct-card-shade .at-service-card-content { z-index: 2; }
+.at-service-card img.oct-pos-top { object-position: center 30%; }
+.at-service-card img.oct-pos-bottom { object-position: center 85%; }
+/* project and mockup images come in different ratios: crop them to the template's frames */
+.about-me-slider-thumb img { aspect-ratio: 770 / 560; object-fit: cover; }
+.at-service-img-wrapper .hover-image img, .at-service-item .thumb img { object-fit: cover; }
+
 /* the 4 hero / footer links were divs in the template */
 a.at-btn.w-100, .at-footer-copyright-area a.at-btn { text-decoration: none; }
 
