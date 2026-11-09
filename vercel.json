@@ -1,0 +1,13 @@
+{
+  "redirects": [
+    { "source": "/time-tracker.html", "destination": "/", "permanent": true },
+    { "source": "/time-tracker", "destination": "/", "permanent": true },
+    { "source": "/chrono-v2.html", "destination": "/", "permanent": true },
+    { "source": "/chrono-v2", "destination": "/", "permanent": true },
+    { "source": "/chrono-v3.html", "destination": "/", "permanent": true },
+    { "source": "/chrono-v3", "destination": "/", "permanent": true },
+    { "source": "/CHRONO_Mobile_App.html", "destination": "/", "permanent": true },
+    { "source": "/CHRONO_Mobile_App", "destination": "/", "permanent": true },
+    { "source": "/qr-generator.html", "destination": "/QR-code.html", "permanent": true }
+  ]
+}
