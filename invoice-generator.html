@@ -1172,7 +1172,13 @@ function printInvoice(){
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Syne',sans-serif;}</style>
     <style>${[...document.styleSheets].map(s=>{try{return [...s.cssRules].map(r=>r.cssText).join('\n')}catch{return ''}}).join('\n')}</style>
-  </head><body>${doc.outerHTML}</body></html>`);
+  </head><body>${doc.outerHTML}<!-- oct-tools-footer -->
+<footer style="clear:both;position:relative;z-index:1;text-align:center;font:14px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;padding:28px 16px;opacity:.85">
+  <p style="margin:0 0 6px">A free tool by <a href="/" style="color:inherit;font-weight:600">OptimaCoreTech</a>, web design, apps and AI agents in Antwerp. <a href="/web-design-antwerp.html" style="color:inherit">Need a website?</a></p>
+  <p style="margin:0">More free tools: <a href="/csv-dashboard.html" style="color:inherit">CSV Dashboard Generator</a> · <a href="/time-tracker.html" style="color:inherit">Time Tracker</a> · <a href="/money-leak-detector.html" style="color:inherit">Money Leak Detector</a> · <a href="/QR-code.html" style="color:inherit">QR Code Generator</a> · <a href="/workdey.html" style="color:inherit">WorkDey job finder</a></p>
+</footer>
+<!-- /oct-tools-footer -->
+</body></html>`);
   win.document.close();
   setTimeout(()=>{win.print();win.close();},600);
 }
